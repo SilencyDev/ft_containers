@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/15 16:42:54 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/15 17:34:19 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,30 @@ int	main(void)
 	{
 		std::cout << *rit << std::endl;
 	}
-
+	std::cout << "===================== Iter + resize" << std::endl;
+	lst->resize(5);
+	it = lst->begin();
+	end = lst->end();
+	for (; it != end; it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout << "===================== Iter + resize 2 higher with set value" << std::endl;
+	lst->resize(7, 100);
+	it = lst->begin();
+	end = lst->end();
+	for (; it != end; it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout << "===================== Iter + resize 3 higher without set value" << std::endl;
+	lst->resize(10);
+	it = lst->begin();
+	end = lst->end();
+	for (; it != end; it++)
+	{
+		std::cout << *it << std::endl;
+	}
 	return (0);
 }
 

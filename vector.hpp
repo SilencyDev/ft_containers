@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/15 16:36:47 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/15 17:36:21 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ namespace ft {
 				this->_capacity = n;
 				while (current_size--)
 				{
-					// std::cout << *(_start + current_size) << std::endl;
 					_alloc.construct(fresh + current_size, *(_start + current_size));
 				}
 				current_size = _current;
@@ -119,7 +118,40 @@ namespace ft {
 				_alloc.deallocate(_start, tmp);
 				_start = fresh;
 				_end = _start + _current;
-
+			}
+			void resize (size_type n, value_type val = value_type())
+			{
+				if (n > _capacity)
+				{
+					size_type	tmp = _capacity;
+					reserve(n);
+					_end = _start + n;
+					_current = n;
+					while (tmp < n--)
+					{
+						if (val)
+							_alloc.construct(_start + n, val);
+						else
+							_alloc.construct(_start + n, 0);
+					}
+				}
+				else if (n < _capacity)
+				{
+					pointer		fresh = _alloc.allocate(n);
+					size_type	current_size = _current;
+					size_type	tmp = _capacity;
+					_capacity = n;
+					_current = n;
+					while (n--)
+					{
+						_alloc.construct(fresh + n, *(_start + n));
+					}
+					while (current_size--)
+						_alloc.destroy(_start + current_size);
+					_alloc.deallocate(_start, tmp);
+					_start = fresh;
+					_end = _start + _current;
+				}
 			}
 			reference		at( size_type pos );
 			const_reference	at( size_type pos ) const;
