@@ -6,13 +6,14 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/14 15:57:01 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/15 16:42:54 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <string>
 #include <deque>
+#include <vector>
 #include "vector.hpp"
 #include "iterator.hpp"
 
@@ -31,15 +32,46 @@ struct Buffer
 
 int	main(void)
 {
-	ft::vector<int> lst(10, 5);
-	ft::vector<int>::iterator it = lst.begin();
-	ft::vector<int>::iterator end = lst.end();
+	ft::vector<int> *lst = new ft::vector<int>(10, 5);
+	ft::vector<int>::iterator it = lst->begin();
+	ft::vector<int>::iterator end = lst->end();
+	ft::vector<int>::reverse_iterator rit = lst->rbegin();
+	ft::vector<int>::reverse_iterator rend = lst->rend();
 
-	(void)lst;
+	std::cout << "===================== Standard fill" << std::endl;
 	for (; it != end; it++)
 	{
 		std::cout << *it << std::endl;
 	}
+	std::cout << "===================== Iter on set value" << std::endl;
+	it = lst->begin();
+	end = lst->end();
+	for (int i = 0; it != end; it++)
+	{
+		*it = i++;
+		std::cout << *it << std::endl;
+	}
+	std::cout << "===================== Reverse" << std::endl;
+	for (; rit != rend; rit++)
+	{
+		std::cout << *rit << std::endl;
+	}
+	std::cout << "===================== Iter + reserve()" << std::endl;
+	lst->reserve(12);
+	it = lst->begin();
+	end = lst->end();
+	for (; it != end; it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout << "===================== Reverse + reserve()" << std::endl;
+	rit = lst->rbegin();
+	rend = lst->rend();
+	for (; rit != rend; rit++)
+	{
+		std::cout << *rit << std::endl;
+	}
+
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/14 15:55:40 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/15 15:10:05 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,10 @@ namespace ft {
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category			iterator_category;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
 		public :
-			random_access_iterator(void)
-			{
-				this->_current = NULL;
-			}
-			random_access_iterator(pointer ptr)
-			{
-				this->_current = ptr;
-			}
+			random_access_iterator(void) : _current(NULL) {}
+			random_access_iterator(pointer ptr) : _current(ptr) {}
 			random_access_iterator(random_access_iterator const &rhs) : _current(rhs._current) {}
 			random_access_iterator &operator=(random_access_iterator const &rhs)
 			{
@@ -66,6 +60,18 @@ namespace ft {
 				random_access_iterator tmp(*this);
 
 				operator++();
+				return (tmp);
+			}
+			random_access_iterator &operator--(void)
+			{
+				this->_current--;
+				return (*this);
+			}
+			random_access_iterator operator--(int)
+			{
+				random_access_iterator tmp(*this);
+
+				operator--();
 				return (tmp);
 			}
 			bool operator==(random_access_iterator const &rhs)
@@ -103,6 +109,98 @@ namespace ft {
 				return (this->_current);
 			}
 			reference operator*()
+			{
+				return (*(this->_current));
+			}
+			reference operator->()
+			{
+				return (*(this->_current));
+			}
+		protected :
+			pointer _current;
+	};
+
+	template <class T>
+	class reverse_iterator : public iterator<ft::random_access_iterator_tag, T>
+	{
+		public :
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type			value_type;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
+		public :
+			reverse_iterator(void) : _current(NULL) {}
+			reverse_iterator(pointer ptr) : _current(ptr) {}
+			reverse_iterator(reverse_iterator const &rhs) : _current(rhs._current) {}
+			reverse_iterator &operator=(reverse_iterator const &rhs)
+			{
+				this->_current = rhs._current;
+				return (*this);
+			}
+			reverse_iterator &operator++(void)
+			{
+				this->_current--;
+				return (*this);
+			}
+			reverse_iterator operator++(int)
+			{
+				reverse_iterator tmp(*this);
+
+				operator++();
+				return (tmp);
+			}
+			reverse_iterator &operator--(void)
+			{
+				this->_current++;
+				return (*this);
+			}
+			reverse_iterator operator--(int)
+			{
+				reverse_iterator tmp(*this);
+
+				operator++();
+				return (tmp);
+			}
+			bool operator==(reverse_iterator const &rhs)
+			{
+				return (this->_current == rhs._current);
+			}
+			bool operator!=(reverse_iterator const &rhs)
+			{
+				return (this->_current != rhs._current);
+			}
+			bool operator<=(reverse_iterator const &rhs)
+			{
+				return (this->_current <= rhs._current);
+			}
+			bool operator>=(reverse_iterator const &rhs)
+			{
+				return (this->_current >= rhs._current);
+			}
+			bool operator>(reverse_iterator const &rhs)
+			{
+				return (this->_current > rhs._current);
+			}
+			bool operator<(reverse_iterator const &rhs)
+			{
+				return (this->_current < rhs._current);
+			}
+			reference operator+=(reverse_iterator const &rhs)
+			{
+				this->_current = this->_current + rhs._current;
+				return (this->_current);
+			}
+			reference operator-=(reverse_iterator const &rhs)
+			{
+				this->_current = this->_current - rhs._current;
+				return (this->_current);
+			}
+			reference operator*()
+			{
+				return (*(this->_current));
+			}
+			reference operator->()
 			{
 				return (*(this->_current));
 			}
