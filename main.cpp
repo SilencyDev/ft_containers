@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/15 17:34:19 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/16 17:40:27 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	main(void)
 	std::cout << "===================== Iter on set value" << std::endl;
 	it = lst->begin();
 	end = lst->end();
-	for (int i = 0; it != end; it++)
+	for (int i = 1; it != end; it++)
 	{
 		*it = i++;
 		std::cout << *it << std::endl;
@@ -58,6 +58,22 @@ int	main(void)
 	}
 	std::cout << "===================== Iter + reserve()" << std::endl;
 	lst->reserve(12);
+	it = lst->begin();
+	end = lst->end();
+	for (; it != end; it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout << "===================== push_back(20)" << std::endl;
+	lst->push_back(20);
+	it = lst->begin();
+	end = lst->end();
+	for (; it != end; it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout << "===================== pop_back()" << std::endl;
+	lst->pop_back();
 	it = lst->begin();
 	end = lst->end();
 	for (; it != end; it++)
@@ -95,6 +111,15 @@ int	main(void)
 	{
 		std::cout << *it << std::endl;
 	}
+	std::cout << "===================== front back and back -= front" << std::endl;
+	std::cout << lst->front() << std::endl;
+	std::cout << lst->back() << std::endl;
+	std::cout << (lst->back() -= lst->front()) << std::endl;
+	std::cout << "===================== at 2 5 7 9" << std::endl;
+	std::cout << lst->at(2) << std::endl;
+	std::cout << lst->at(5) << std::endl;
+	std::cout << lst->at(7) << std::endl;
+	std::cout << lst->at(9) << std::endl;
 	return (0);
 }
 

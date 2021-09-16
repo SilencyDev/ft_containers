@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/15 17:36:21 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/16 17:48:14 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define VECTOR_HPP
 # include <iostream>
 # include <memory>
+# include <limits>
 # include "iterator.hpp"
 
 namespace ft {
@@ -37,7 +38,6 @@ namespace ft {
 			pointer			_start;
 			pointer			_end;
 			size_type		_capacity;
-			size_type		_current;
 			allocator_type	_alloc;
 
 		public :
@@ -45,7 +45,6 @@ namespace ft {
 			{
 				_alloc = alloc;
 				_capacity = 0;
-				_current = 0;
 				_start = NULL;
 				_end = NULL;
 			}
@@ -55,12 +54,9 @@ namespace ft {
 				_alloc = alloc;
 				_start = _alloc.allocate(n);
 				_capacity = n;
-				_current = n;
 				_end = _start + n;
 				while (n--)
-				{
 					_alloc.construct(_start + n, val);
-				}
 			}
 			// template <class InputIterator>
 			// vector(InputIterator first, InputIterator last,
@@ -71,9 +67,7 @@ namespace ft {
 			{
 				int tmp = _capacity;
 				while (_capacity--)
-				{
 					_alloc.destroy(_start + _capacity);
-				}
 				_alloc.deallocate(_start, tmp);
 			}
 			template< class InputIt >
@@ -86,82 +80,138 @@ namespace ft {
 			}
 			size_type		size() const
 			{
-				return (this->_current);
-			};
+				return (_end - _start);
+			}
 			size_type		max_size() const
 			{
-				return (std::numeric_limits<size_type>::max());
-			};
+				if (sizeof(value_type) == 1)
+					return (_alloc.max_size() / 2);
+				return (_alloc.max_size());
+			}
 			size_type		capacity() const
 			{
-				return (this->_capacity);
-			};
+				return (_capacity);
+			}
 			bool empty() const
 			{
 				return (size() ? 1 : 0);
 			}
 			void reserve(size_type n)
 			{
+				if (n > this->max_size())
+					throw std::length_error("vector");
 				if (n <= this->_capacity)
 					return ;
 				pointer		fresh = _alloc.allocate(n);
-				size_type	current_size = _current;
+				size_type	current_size = size();
 				size_type	tmp = _capacity;
 				this->_capacity = n;
 				while (current_size--)
-				{
 					_alloc.construct(fresh + current_size, *(_start + current_size));
-				}
-				current_size = _current;
+				current_size = size();
 				while (current_size--)
 					_alloc.destroy(_start + current_size);
 				_alloc.deallocate(_start, tmp);
+				current_size = size();
 				_start = fresh;
-				_end = _start + _current;
+				_end = _start + current_size;
 			}
 			void resize (size_type n, value_type val = value_type())
 			{
+				if (n == _capacity)
+					return ;
 				if (n > _capacity)
 				{
+					if (_capacity == 0)
+						_capacity = 1;
+					else if (_capacity < SIZE_MAX / 2)
+						_capacity = _capacity * 2;
+					else
+						_capacity = SIZE_MAX;
+					if (n > _capacity)
+						_capacity = n;
+					reserve(_capacity);
 					size_type	tmp = _capacity;
-					reserve(n);
-					_end = _start + n;
-					_current = n;
-					while (tmp < n--)
+					size_type	oldsize = size();
+					_end = _start + tmp;
+					while (oldsize < tmp--)
 					{
 						if (val)
-							_alloc.construct(_start + n, val);
+							_alloc.construct(_start + tmp, val);
 						else
-							_alloc.construct(_start + n, 0);
+							_alloc.construct(_start + tmp, 0);
 					}
 				}
-				else if (n < _capacity)
+				else if (n < size())
 				{
-					pointer		fresh = _alloc.allocate(n);
-					size_type	current_size = _current;
+					size_type tmp = n;
+					while (n++ < size())
+						_alloc.destroy(_start + n);
+					_end = _start + tmp;
+				}
+				else if (n > size())
+				{
 					size_type	tmp = _capacity;
-					_capacity = n;
-					_current = n;
-					while (n--)
+					size_type	oldsize = size();
+					_end = _start + n;
+					while (oldsize < tmp--)
 					{
-						_alloc.construct(fresh + n, *(_start + n));
+						if (val)
+							_alloc.construct(_start + tmp, val);
+						else
+							_alloc.construct(_start + tmp, 0);
 					}
-					while (current_size--)
-						_alloc.destroy(_start + current_size);
-					_alloc.deallocate(_start, tmp);
-					_start = fresh;
-					_end = _start + _current;
 				}
 			}
-			reference		at( size_type pos );
-			const_reference	at( size_type pos ) const;
-			reference		operator[]( size_type pos );
-			const_reference	operator[]( size_type pos ) const;
-			reference		front();
-			const_reference	front() const;
-			reference		back();
-			const_reference	back() const;
-
+			void push_back (const value_type& val)
+			{
+				resize(size() + 1, val);
+			}
+			void pop_back()
+			{
+				if (size() > 0)
+					_alloc.destroy(_end-- - 1);
+			}
+			reference		at( size_type pos )
+			{
+				if (pos < 0)
+					throw std::out_of_range("vector");
+				else if (pos >= size())
+					throw std::out_of_range("vector");
+				return (*(_start + pos));
+			}
+			const_reference	at( size_type pos ) const
+			{
+				if (pos < 0)
+					throw std::out_of_range("vector");
+				else if (pos >= size())
+					throw std::out_of_range("vector");
+				return (*(_start + pos));
+			}
+			reference		operator[]( size_type pos )
+			{
+				return (*(_start + pos));
+			}
+			const_reference	operator[]( size_type pos ) const
+			{
+				return (*(_start + pos));
+			}
+			reference		front()
+			{
+				return (*_start);
+			}
+			const_reference	front() const
+			{
+				return (*_start);
+			}
+			reference		back()
+			{
+				return (*(_end - 1));
+			}
+			const_reference	back() const
+			{
+				return (*(_end - 1));
+			}
 			iterator begin()
 			{
 				return (_start);
@@ -178,10 +228,8 @@ namespace ft {
 			{
 				return (_start - 1);
 			}
-
-			T*				data();
-			const T*		data() const;
 	};
+
 	template< class T, class Alloc >
 	bool operator==(const ft::vector<T,Alloc> & lhs, const ft::vector<T,Alloc> & rhs);
 
