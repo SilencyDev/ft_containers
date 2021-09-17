@@ -6,13 +6,13 @@
 #    By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/03 13:10:40 by kmacquet          #+#    #+#              #
-#    Updated: 2021/08/03 13:16:56 by kmacquet         ###   ########.fr        #
+#    Updated: 2021/09/17 15:50:39 by kmacquet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = Containers
 CXX = clang++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -fsanitize=address -std=c++98
 SRCS = $(wildcard *.cpp)
 OBJS = $(SRCS:.cpp=.o)
 

@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/16 17:40:27 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/17 15:58:58 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,26 @@ struct Buffer
 
 int	main(void)
 {
-	ft::vector<int> *lst = new ft::vector<int>(10, 5);
-	ft::vector<int>::iterator it = lst->begin();
-	ft::vector<int>::iterator end = lst->end();
-	ft::vector<int>::reverse_iterator rit = lst->rbegin();
-	ft::vector<int>::reverse_iterator rend = lst->rend();
+	ft::vector<int> lst = ft::vector<int>(10, 5);
+	ft::vector<int> lst2(lst);
+	ft::vector<int>::iterator it = lst.begin();
+	ft::vector<int>::iterator end = lst.end();
+	ft::vector<int>::iterator it2 = lst2.begin();
+	ft::vector<int>::iterator end2 = lst2.end();
+	ft::vector<int>::reverse_iterator rit = lst.rbegin();
+	ft::vector<int>::reverse_iterator rend = lst.rend();
 
 	std::cout << "===================== Standard fill" << std::endl;
+	std::cout << &(*it) << std::endl;
 	for (; it != end; it++)
-	{
 		std::cout << *it << std::endl;
-	}
+	std::cout << "===================== Standard copy" << std::endl;
+	std::cout << &(*it2) << std::endl;
+	for (; it2 != end2; it2++)
+		std::cout << *it2 << std::endl;
 	std::cout << "===================== Iter on set value" << std::endl;
-	it = lst->begin();
-	end = lst->end();
+	it = lst.begin();
+	end = lst.end();
 	for (int i = 1; it != end; it++)
 	{
 		*it = i++;
@@ -57,69 +63,99 @@ int	main(void)
 		std::cout << *rit << std::endl;
 	}
 	std::cout << "===================== Iter + reserve()" << std::endl;
-	lst->reserve(12);
-	it = lst->begin();
-	end = lst->end();
+	lst.reserve(12);
+	it = lst.begin();
+	end = lst.end();
 	for (; it != end; it++)
-	{
 		std::cout << *it << std::endl;
-	}
 	std::cout << "===================== push_back(20)" << std::endl;
-	lst->push_back(20);
-	it = lst->begin();
-	end = lst->end();
+	lst.push_back(20);
+	it = lst.begin();
+	end = lst.end();
 	for (; it != end; it++)
-	{
 		std::cout << *it << std::endl;
-	}
 	std::cout << "===================== pop_back()" << std::endl;
-	lst->pop_back();
-	it = lst->begin();
-	end = lst->end();
+	lst.pop_back();
+	it = lst.begin();
+	end = lst.end();
 	for (; it != end; it++)
 	{
 		std::cout << *it << std::endl;
 	}
 	std::cout << "===================== Reverse + reserve()" << std::endl;
-	rit = lst->rbegin();
-	rend = lst->rend();
+	rit = lst.rbegin();
+	rend = lst.rend();
 	for (; rit != rend; rit++)
-	{
 		std::cout << *rit << std::endl;
-	}
 	std::cout << "===================== Iter + resize" << std::endl;
-	lst->resize(5);
-	it = lst->begin();
-	end = lst->end();
+	lst.resize(5);
+	it = lst.begin();
+	end = lst.end();
 	for (; it != end; it++)
-	{
 		std::cout << *it << std::endl;
-	}
 	std::cout << "===================== Iter + resize 2 higher with set value" << std::endl;
-	lst->resize(7, 100);
-	it = lst->begin();
-	end = lst->end();
+	lst.resize(7, 100);
+	it = lst.begin();
+	end = lst.end();
 	for (; it != end; it++)
 	{
 		std::cout << *it << std::endl;
 	}
 	std::cout << "===================== Iter + resize 3 higher without set value" << std::endl;
-	lst->resize(10);
-	it = lst->begin();
-	end = lst->end();
+	lst.resize(10);
+	it = lst.begin();
+	end = lst.end();
 	for (; it != end; it++)
-	{
 		std::cout << *it << std::endl;
-	}
-	std::cout << "===================== front back and back -= front" << std::endl;
-	std::cout << lst->front() << std::endl;
-	std::cout << lst->back() << std::endl;
-	std::cout << (lst->back() -= lst->front()) << std::endl;
+	std::cout << "===================== front back and back -= front " << std::endl;
+	std::cout << lst.front() << std::endl;
+	std::cout << lst.back() << std::endl;
+	std::cout << (lst.back() -= lst.front()) << std::endl;
 	std::cout << "===================== at 2 5 7 9" << std::endl;
-	std::cout << lst->at(2) << std::endl;
-	std::cout << lst->at(5) << std::endl;
-	std::cout << lst->at(7) << std::endl;
-	std::cout << lst->at(9) << std::endl;
+	std::cout << lst.at(2) << std::endl;
+	std::cout << lst.at(5) << std::endl;
+	std::cout << lst.at(7) << std::endl;
+	std::cout << lst.at(9) << std::endl;
+
+	std::cout << "===================== erase(begin + 1)" << std::endl;
+	it = lst.begin();
+	lst.erase(++it);
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== erase(end - 1)" << std::endl;
+	end = lst.end();
+	lst.erase(--end);
+	end = lst.end();
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== erase(begin + 1, end - 1)" << std::endl;
+	it = lst.begin();
+	end = lst.end();
+	lst.erase(++it, --end);
+	end = lst.end();
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== swap lst and lst2 " << std::endl;
+	lst.swap(lst2);
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== assign(n, val) " << std::endl;
+	lst.assign(10, 10);
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== clear lst2 " << std::endl;
+	lst.clear();
+	std::cout << lst.size() << std::endl;
 	return (0);
 }
 
@@ -134,12 +170,12 @@ int	main(void)
 // 	const int seed = atoi(argv[1]);
 // 	srand(seed);
 
-// 	ft::vector<std::string> vector_str;
-// 	ft::vector<int> vector_int;
-// 	ft::stack<int> stack_int;
-// 	ft::vector<Buffer> vector_buffer;
-// 	ft::stack<Buffer, std::deque<int> > stack_deq_buffer;
-// 	ft::map<int, int> map_int;
+// 	std::vector<std::string> vector_str;
+// 	std::vector<int> vector_int;
+// 	std::stack<int> stack_int;
+// 	std::vector<Buffer> vector_buffer;
+// 	std::stack<Buffer, std::deque<int> > stack_deq_buffer;
+// 	std::map<int, int> map_int;
 
 // 	for (int i = 0; i < COUNT; i++)
 // 	{
@@ -151,7 +187,7 @@ int	main(void)
 // 		const int idx = rand() % COUNT;
 // 		vector_buffer[idx].idx = 5;
 // 	}
-// 	ft::vector<Buffer>().swap(vector_buffer);
+// 	std::vector<Buffer>().swap(vector_buffer);
 
 // 	try
 // 	{
@@ -169,7 +205,7 @@ int	main(void)
 	
 // 	for (int i = 0; i < COUNT; ++i)
 // 	{
-// 		map_int.insert(ft::make_pair(rand(), rand()));
+// 		map_int.insert(std::make_pair(rand(), rand()));
 // 	}
 
 // 	int sum = 0;
@@ -181,7 +217,7 @@ int	main(void)
 // 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
 // 	{
-// 		ft::map<int, int> copy = map_int;
+// 		std::map<int, int> copy = map_int;
 // 	}
 // 	MutantStack<char> iterable_stack;
 // 	for (char letter = 'a'; letter <= 'z'; letter++)

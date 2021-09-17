@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/16 17:48:14 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/17 16:07:26 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,14 @@ namespace ft {
 			// template <class InputIterator>
 			// vector(InputIterator first, InputIterator last,
 			// 	const allocator_type& alloc = allocator_type());
-			// vector(const vector& x);
+			vector(const vector& x)
+			{
+				_start = NULL;
+				_end = NULL;
+				_capacity = 0;
+				if (this != &x)
+					*this = x;
+			}
 
 			~vector()
 			{
@@ -70,13 +77,49 @@ namespace ft {
 					_alloc.destroy(_start + _capacity);
 				_alloc.deallocate(_start, tmp);
 			}
-			template< class InputIt >
-			void assign( InputIt first, InputIt last );
-			vector& operator=(vector const & src);
-
+			void assign(size_type n, const value_type& val)
+			{
+				pointer ptr = _start;
+				for (; ptr != _end; ptr++)
+					_alloc.destroy(ptr);
+				_end = _start;
+				resize(n, val);
+			}
+			// template< class InputIt >
+			// void assign( InputIt first, InputIt last )
+			// {
+			// 	pointer ptr = &(*first);
+			// 	pointer newstart = _alloc.allocate(diff);
+			// 	size_type diff = &(*last) - ptr + 1;
+			// 	for (size_type i = 0; ptr != _end; i++)
+			// 		_alloc.construct(newstart + i, *(ptr++));
+			// 	ptr = _start;
+			// 	for (; ptr != _end; ptr++)
+			// 		_alloc.destroy(ptr);
+			// 	_alloc.deallocate(_start, _end - _start);
+			// 	_start = newstart;
+			// 	_end = newstart + diff;
+			// }
+			vector& operator=(vector const & src)
+			{
+				if (this->size())
+				{
+					pointer ptr = _start;
+					for (; ptr != _end; ptr++)
+						_alloc.destroy(ptr);
+					this->_alloc.deallocate(_start, _capacity);
+					_end = _start;
+				}
+				_start = this->_alloc.allocate(src.size());
+				for(size_type i = 0; i < src.size(); i++)
+					_alloc.construct(_start + i, *(src._start + i));
+				_capacity = src.size();
+				_end = _start + src.size();
+				return (*this);
+			}
 			allocator_type	get_allocator() const
 			{
-				return (this->_alloc);
+				return (_alloc);
 			}
 			size_type		size() const
 			{
@@ -95,6 +138,39 @@ namespace ft {
 			bool empty() const
 			{
 				return (size() ? 1 : 0);
+			}
+			iterator erase(iterator position)
+			{
+				pointer ptr = &(*position);
+				_alloc.destroy(ptr);
+				if (ptr != _end - 1)
+				{
+					for (; ptr != _end;)
+					{
+						_alloc.construct(ptr, *(ptr + 1));
+						_alloc.destroy(ptr++ + 1);
+					}
+				}
+				_end -= 1;
+				return (&(*position));
+			}
+			iterator erase(iterator first, iterator last)
+			{
+				pointer ptr1 = &(*first);
+				size_type diff = &(*last) - ptr1 + 1;
+				if (&(*last) != _end - 1)
+				{
+					for (; (ptr1 + diff) != _end;)
+					{
+						_alloc.construct(ptr1, *(ptr1 + diff));
+						_alloc.destroy(ptr1++ + diff);
+					}
+				}
+				else
+					for (; ptr1 != _end; ptr1++)
+						_alloc.destroy(ptr1);
+				_end -= diff;
+				return (&(*first));
 			}
 			void reserve(size_type n)
 			{
@@ -118,8 +194,7 @@ namespace ft {
 			}
 			void resize (size_type n, value_type val = value_type())
 			{
-				if (n == _capacity)
-					return ;
+				size_type	oldsize = size();
 				if (n > _capacity)
 				{
 					if (_capacity == 0)
@@ -132,15 +207,9 @@ namespace ft {
 						_capacity = n;
 					reserve(_capacity);
 					size_type	tmp = _capacity;
-					size_type	oldsize = size();
 					_end = _start + tmp;
 					while (oldsize < tmp--)
-					{
-						if (val)
-							_alloc.construct(_start + tmp, val);
-						else
-							_alloc.construct(_start + tmp, 0);
-					}
+						_alloc.construct(_start + tmp, val);
 				}
 				else if (n < size())
 				{
@@ -152,15 +221,9 @@ namespace ft {
 				else if (n > size())
 				{
 					size_type	tmp = _capacity;
-					size_type	oldsize = size();
 					_end = _start + n;
 					while (oldsize < tmp--)
-					{
-						if (val)
-							_alloc.construct(_start + tmp, val);
-						else
-							_alloc.construct(_start + tmp, 0);
-					}
+						_alloc.construct(_start + tmp, val);
 				}
 			}
 			void push_back (const value_type& val)
@@ -171,6 +234,31 @@ namespace ft {
 			{
 				if (size() > 0)
 					_alloc.destroy(_end-- - 1);
+			}
+			void clear()
+			{
+				size_type tmp = size();
+				while (tmp--)
+					_alloc.destroy(_start + tmp);
+				_end = _start;
+			}
+			void swap (vector& x)
+			{
+				pointer ptr = x._start;
+				x._start = this->_start;
+				this->_start = ptr;
+
+				ptr = x._end;
+				x._end = this->_end;
+				this->_end = ptr;
+
+				allocator_type alloc = x._alloc;
+				x._alloc = this->_alloc;
+				this->_alloc = alloc;
+
+				size_type capacity = x._capacity;
+				x._capacity = this->_capacity;
+				this->_capacity = capacity;
 			}
 			reference		at( size_type pos )
 			{
@@ -230,6 +318,12 @@ namespace ft {
 			}
 	};
 
+	template <class T, class Alloc>
+	void swap(ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y)
+	{
+		x.swap(y);
+	}
+
 	template< class T, class Alloc >
 	bool operator==(const ft::vector<T,Alloc> & lhs, const ft::vector<T,Alloc> & rhs);
 
@@ -247,9 +341,6 @@ namespace ft {
 
 	template< class T, class Alloc >
 	bool operator>=(const ft::vector<T,Alloc> & lhs, const ft::vector<T,Alloc> & rhs);
-
-	template< class T, class Alloc >
-	void swap(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs);
 
 };
 
