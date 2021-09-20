@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/17 15:58:58 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/20 11:22:16 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,24 @@ int	main(void)
 		std::cout << *it << std::endl;
 	std::cout << "===================== assign(n, val) " << std::endl;
 	lst.assign(10, 10);
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== insert x3 " << std::endl;
+	it = lst.begin();
+	lst.insert(++it, 20);
+	it = lst.begin();
+	lst.insert(++it, 20);
+	it = lst.begin();
+	lst.insert(++it, 20);
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
+	std::cout << "===================== insert range 3 " << std::endl;
+	it = lst.begin();
+	lst.insert(++it, (size_t)3, 300);
 	it = lst.begin();
 	end = lst.end();
 	for (; it != end; it++)

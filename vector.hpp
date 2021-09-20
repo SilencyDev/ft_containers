@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/17 16:07:26 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/20 11:39:22 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,16 @@ namespace ft {
 	class vector
 	{
 		public :
-			typedef T									value_type;
-			typedef value_type&							reference;
-			typedef const value_type&					const_reference;
-			typedef Alloc								allocator_type;
-			typedef size_t								size_type;
-			typedef ptrdiff_t							difference_type;
-			typedef T*									pointer;
-			typedef T* const							const_pointer;
-			typedef ft::random_access_iterator<T>		iterator;
-			typedef ft::reverse_iterator<T>				reverse_iterator;
+			typedef T											value_type;
+			typedef Alloc										allocator_type;
+			typedef typename allocator_type::reference			reference;
+			typedef typename allocator_type::const_reference	const_reference;
+			typedef size_t										size_type;
+			typedef ptrdiff_t									difference_type;
+			typedef typename allocator_type::pointer			pointer;
+			typedef typename allocator_type::const_pointer		const_pointer;
+			typedef ft::random_access_iterator<value_type>		iterator;
+			typedef ft::reverse_iterator<value_type>			reverse_iterator;
 		
 		protected :
 			pointer			_start;
@@ -88,17 +88,9 @@ namespace ft {
 			// template< class InputIt >
 			// void assign( InputIt first, InputIt last )
 			// {
-			// 	pointer ptr = &(*first);
-			// 	pointer newstart = _alloc.allocate(diff);
-			// 	size_type diff = &(*last) - ptr + 1;
-			// 	for (size_type i = 0; ptr != _end; i++)
-			// 		_alloc.construct(newstart + i, *(ptr++));
-			// 	ptr = _start;
-			// 	for (; ptr != _end; ptr++)
-			// 		_alloc.destroy(ptr);
-			// 	_alloc.deallocate(_start, _end - _start);
-			// 	_start = newstart;
-			// 	_end = newstart + diff;
+			// 	this->clear();
+			// 	for(; first != last + 1; first++)
+			// 		push_back(*first);
 			// }
 			vector& operator=(vector const & src)
 			{
@@ -135,9 +127,38 @@ namespace ft {
 			{
 				return (_capacity);
 			}
-			bool empty() const
-			{
+			bool empty() const {
 				return (size() ? 1 : 0);
+			}
+			iterator insert(iterator position, const value_type& val)
+			{
+				value_type lastval = *(_end - 1);
+				pointer tmp = _end - 1;
+				for(; tmp != &(*position); tmp--)
+				{
+					_alloc.destroy(tmp);
+					_alloc.construct(tmp, *(tmp - 1));
+				}
+				_alloc.destroy(&(*position));
+				_alloc.construct(&(*position), val);
+				*position = val;
+				size_type tmp2 = &(*position) - _start + 1;
+				push_back(lastval);
+				return (_start + tmp2);
+			}
+			void insert (iterator position, size_type n, const value_type& val)
+			{
+				iterator pos = position;
+				while (n--)
+					pos = insert(pos, val);
+			}
+			template <class InputIterator>
+			void insert (iterator position, InputIterator first, InputIterator last)
+			{
+				iterator pos = position;
+				pointer ptr = &(*first);
+				for (; ptr != &(*(last + 1)); ptr++)
+					pos = insert(pos, *ptr);
 			}
 			iterator erase(iterator position)
 			{
@@ -181,7 +202,6 @@ namespace ft {
 				pointer		fresh = _alloc.allocate(n);
 				size_type	current_size = size();
 				size_type	tmp = _capacity;
-				this->_capacity = n;
 				while (current_size--)
 					_alloc.construct(fresh + current_size, *(_start + current_size));
 				current_size = size();
@@ -191,22 +211,24 @@ namespace ft {
 				current_size = size();
 				_start = fresh;
 				_end = _start + current_size;
+				this->_capacity = n;
 			}
 			void resize (size_type n, value_type val = value_type())
 			{
+				size_type	newsize;
 				size_type	oldsize = size();
 				if (n > _capacity)
 				{
 					if (_capacity == 0)
-						_capacity = 1;
+						newsize = 1;
 					else if (_capacity < SIZE_MAX / 2)
-						_capacity = _capacity * 2;
+						newsize = _capacity * 2;
 					else
-						_capacity = SIZE_MAX;
+						newsize = SIZE_MAX;
 					if (n > _capacity)
-						_capacity = n;
-					reserve(_capacity);
-					size_type	tmp = _capacity;
+						newsize = n;
+					reserve(newsize);
+					size_type	tmp = n;
 					_end = _start + tmp;
 					while (oldsize < tmp--)
 						_alloc.construct(_start + tmp, val);

@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/15 15:10:05 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/17 18:14:40 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <iostream>
 
 namespace ft {
-
 	template <class Category,
 			class T,
 			class Distance = ptrdiff_t,
@@ -124,7 +123,7 @@ namespace ft {
 	class reverse_iterator : public iterator<ft::random_access_iterator_tag, T>
 	{
 		public :
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type			value_type;
+			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
