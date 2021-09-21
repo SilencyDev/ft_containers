@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/20 11:22:16 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 11:38:02 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,28 +27,49 @@ struct Buffer
 	char buff[BUFFER_SIZE];
 };
 
-
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 int	main(void)
 {
 	ft::vector<int> lst = ft::vector<int>(10, 5);
 	ft::vector<int> lst2(lst);
+	ft::vector<int> lsthigh = ft::vector<int>(20, 5);
 	ft::vector<int>::iterator it = lst.begin();
 	ft::vector<int>::iterator end = lst.end();
 	ft::vector<int>::iterator it2 = lst2.begin();
 	ft::vector<int>::iterator end2 = lst2.end();
+	ft::vector<int>::iterator it3;
+	ft::vector<int>::iterator end3;
+	ft::vector<int>::iterator tmp;
 	ft::vector<int>::reverse_iterator rit = lst.rbegin();
 	ft::vector<int>::reverse_iterator rend = lst.rend();
 
-	std::cout << "===================== Standard fill" << std::endl;
+	std::cout << "===================== Operators" << std::endl;
+	std::cout << "lst	  == lst2 (1)	: " << (lst == lst2) << std::endl;
+	std::cout << "lst	  != lst2 (0)	: " << (lst != lst2) << std::endl;
+	std::cout << "lst	  >  lst2 (0)	: " << (lst > lst2) << std::endl;
+	std::cout << "lst	  >=  lst2 (1)	: " << (lst >= lst2) << std::endl;
+	std::cout << "lst	  <=  lst2 (1)	: " << (lst <= lst2) << std::endl;
+	std::cout << "lsthigh >  lst2 (1)	: " << (lsthigh > lst2) << std::endl;
+	std::cout << "lst	  <  lsthigh (1): " << (lst < lsthigh) << std::endl;
+	std::cout << "lst	  <  lst2 (0)	: " << (lst < lst2) << std::endl;
+	std::cout << "===================== Standard fill lst" << std::endl;
 	std::cout << &(*it) << std::endl;
 	for (; it != end; it++)
 		std::cout << *it << std::endl;
-	std::cout << "===================== Standard copy" << std::endl;
+	std::cout << "===================== Standard copy lst2" << std::endl;
 	std::cout << &(*it2) << std::endl;
 	for (; it2 != end2; it2++)
 		std::cout << *it2 << std::endl;
+	std::cout << "===================== Standard range lst3" << std::endl;
+	it = lst.begin();
+	tmp = lst.end();
+	ft::vector<int> lst3(it, --tmp);
+	it3 = lst3.begin();
+	end3 = lst3.end();
+	std::cout << &(*it3) << std::endl;
+	for (; it3 != end3; it3++)
+		std::cout << *it3 << std::endl;
 	std::cout << "===================== Iter on set value" << std::endl;
 	it = lst.begin();
 	end = lst.end();
@@ -59,9 +80,7 @@ int	main(void)
 	}
 	std::cout << "===================== Reverse" << std::endl;
 	for (; rit != rend; rit++)
-	{
 		std::cout << *rit << std::endl;
-	}
 	std::cout << "===================== Iter + reserve()" << std::endl;
 	lst.reserve(12);
 	it = lst.begin();
@@ -79,9 +98,7 @@ int	main(void)
 	it = lst.begin();
 	end = lst.end();
 	for (; it != end; it++)
-	{
 		std::cout << *it << std::endl;
-	}
 	std::cout << "===================== Reverse + reserve()" << std::endl;
 	rit = lst.rbegin();
 	rend = lst.rend();
@@ -153,13 +170,27 @@ int	main(void)
 	end = lst.end();
 	for (; it != end; it++)
 		std::cout << *it << std::endl;
+	std::cout << "===================== assign(first, last) " << std::endl;
+	it2 = lst2.begin();
+	end2 = lst2.end();
+	tmp = end2;
+	--tmp;
+	for (; it2 != end2; it2++)
+		std::cout << *it2 << std::endl;
+	std::cout << "==" << std::endl;
+	it2 = lst2.begin();
+	lst.assign(it2, tmp);
+	it = lst.begin();
+	end = lst.end();
+	for (; it != end; it++)
+		std::cout << *it << std::endl;
 	std::cout << "===================== insert x3 " << std::endl;
 	it = lst.begin();
-	lst.insert(++it, 20);
+	lst.insert(it, 20);
 	it = lst.begin();
-	lst.insert(++it, 20);
+	lst.insert(it, 20);
 	it = lst.begin();
-	lst.insert(++it, 20);
+	lst.insert(it, 20);
 	it = lst.begin();
 	end = lst.end();
 	for (; it != end; it++)

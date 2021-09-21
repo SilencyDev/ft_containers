@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/17 18:14:40 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 12:31:35 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,35 @@ namespace ft {
 			typedef Reference	reference;
 			typedef Category	iterator_category;
 		};
-	
+
 	struct random_access_iterator_tag {};
+
+	template <class iterator>
+	struct iterator_traits {
+		typedef typename	iterator::value_type			value_type;
+		typedef typename	iterator::difference_type		difference_type;
+		typedef typename	iterator::pointer				pointer;
+		typedef typename	iterator::reference				reference;
+		typedef typename	iterator::iterator_category		iterator_category;
+	};
+
+	template <class T>
+	class iterator_traits<T*> {
+		typedef	T								value_type;
+		typedef	ptrdiff_t						difference_type;
+		typedef	T*								pointer;
+		typedef	T&								reference;
+		typedef	ft::random_access_iterator_tag	iterator_category;
+	};
+
+	template <class T>
+	class iterator_traits<const T*> {
+		typedef	T								value_type;
+		typedef	ptrdiff_t						difference_type;
+		typedef	const T*						pointer;
+		typedef	const T&						reference;
+		typedef	ft::random_access_iterator_tag	iterator_category;
+	};
 
 	template <class T>
 	class random_access_iterator : public iterator<ft::random_access_iterator_tag, T>
@@ -206,10 +233,6 @@ namespace ft {
 		protected :
 			pointer _current;
 	};
-
-	template <class Iterator> class iterator_traits {};
-	template <class T> class iterator_traits<T*> {};
-	template <class T> class iterator_traits<const T*> {};
 };
 
 #endif
