@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 13:58:56 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 18:04:36 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@ namespace ft {
 			typedef size_t													size_type;
 			typedef typename allocator_type::pointer						pointer;
 			typedef typename allocator_type::const_pointer					const_pointer;
-			typedef typename ft::random_access_iterator<value_type>			iterator;
-			typedef typename ft::random_access_iterator<const value_type>	const_iterator;
-			typedef typename ft::reverse_iterator<value_type>				reverse_iterator;
+			typedef typename ft::random_access_iterator<pointer>			iterator;
+			typedef typename ft::random_access_iterator<const_pointer>		const_iterator;
+			typedef typename ft::reverse_iterator<pointer>					reverse_iterator;
+			typedef typename ft::reverse_iterator<const_pointer>			const_reverse_iterator;
 			typedef typename iterator_traits<iterator>::difference_type		difference_type;
 		
 		protected :
@@ -147,9 +148,10 @@ namespace ft {
 			}
 			iterator insert(iterator position, const value_type& val)
 			{
-				value_type lastval = *(_end - 1);
+				size_type tmp2 = &(*position) - _start;
+				push_back(*(_end - 1));
 				pointer tmp = _end - 1;
-				for(; tmp != &(*position); tmp--)
+				for(; tmp != (_start + tmp2); tmp--)
 				{
 					_alloc.destroy(tmp);
 					_alloc.construct(tmp, *(tmp - 1));
@@ -157,8 +159,6 @@ namespace ft {
 				_alloc.destroy(&(*position));
 				_alloc.construct(&(*position), val);
 				*position = val;
-				size_type tmp2 = &(*position) - _start + 1;
-				push_back(lastval);
 				return (_start + tmp2);
 			}
 			void insert (iterator position, size_type n, const value_type& val)

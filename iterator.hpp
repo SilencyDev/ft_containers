@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 13:02:57 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 16:19:33 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ namespace ft {
 	};
 
 	template <class T>
-	class iterator_traits<T*> {
+	struct iterator_traits<T*> {
 		typedef	T								value_type;
 		typedef	ptrdiff_t						difference_type;
 		typedef	T*								pointer;
@@ -50,7 +50,7 @@ namespace ft {
 	};
 
 	template <class T>
-	class iterator_traits<const T*> {
+	struct iterator_traits<const T*> {
 		typedef	T								value_type;
 		typedef	ptrdiff_t						difference_type;
 		typedef	const T*						pointer;
@@ -61,12 +61,14 @@ namespace ft {
 	template <class T>
 	class random_access_iterator : public iterator<ft::random_access_iterator_tag, T>
 	{
+		protected :
+			typedef iterator_traits<T> it;
 		public :
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
+			typedef typename it::value_type			value_type;
+			typedef typename it::difference_type	difference_type;
+			typedef typename it::pointer			pointer;
+			typedef typename it::reference			reference;
+			typedef typename it::iterator_category	iterator_category;
 
 			random_access_iterator(void) : _current(NULL) {}
 			random_access_iterator(pointer ptr) : _current(ptr) {}
@@ -149,12 +151,14 @@ namespace ft {
 	template <class T>
 	class reverse_iterator : public iterator<ft::random_access_iterator_tag, T>
 	{
+		protected :
+			typedef iterator_traits<T> it;
 		public :
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type		value_type;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type	difference_type;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
-			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
+			typedef typename it::value_type			value_type;
+			typedef typename it::difference_type	difference_type;
+			typedef typename it::pointer			pointer;
+			typedef typename it::reference			reference;
+			typedef typename it::iterator_category	iterator_category;
 		public :
 			reverse_iterator(void) : _current(NULL) {}
 			reverse_iterator(pointer ptr) : _current(ptr) {}

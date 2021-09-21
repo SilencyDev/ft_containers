@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   main2.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 18:41:27 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 18:41:37 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,18 @@ struct Buffer
 
 int	main(void)
 {
-	ft::vector<int> lst = ft::vector<int>(10, 5);
-	ft::vector<int> lst2(lst);
-	ft::vector<int> lsthigh = ft::vector<int>(20, 5);
-	ft::vector<int>::iterator it = lst.begin();
-	ft::vector<int>::iterator end = lst.end();
-	ft::vector<int>::iterator it2 = lst2.begin();
-	ft::vector<int>::iterator end2 = lst2.end();
-	ft::vector<int>::iterator it3;
-	ft::vector<int>::iterator end3;
-	ft::vector<int>::iterator tmp;
-	ft::vector<int>::reverse_iterator rit = lst.rbegin();
-	ft::vector<int>::reverse_iterator rend = lst.rend();
+	std::vector<int> lst = std::vector<int>(10, 5);
+	std::vector<int> lst2(lst);
+	std::vector<int> lsthigh = std::vector<int>(20, 5);
+	std::vector<int>::iterator it = lst.begin();
+	std::vector<int>::iterator end = lst.end();
+	std::vector<int>::iterator it2 = lst2.begin();
+	std::vector<int>::iterator end2 = lst2.end();
+	std::vector<int>::iterator it3;
+	std::vector<int>::iterator end3;
+	std::vector<int>::iterator tmp;
+	std::vector<int>::reverse_iterator rit = lst.rbegin();
+	std::vector<int>::reverse_iterator rend = lst.rend();
 
 	std::cout << "===================== Operators" << std::endl;
 	std::cout << "lst	  == lst2 (1)	: " << (lst == lst2) << std::endl;
@@ -64,7 +64,7 @@ int	main(void)
 		std::cout << *it2 << std::endl;
 	std::cout << lst2.capacity() << std::endl;
 	std::cout << "===================== Standard range lst3" << std::endl;
-	ft::vector<int> lst3(lst.begin(), lst.end());
+	std::vector<int> lst3(lst.begin(), lst.end());
 	it3 = lst3.begin();
 	end3 = lst3.end();
 	std::cout << &(*it3) << std::endl;
