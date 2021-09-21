@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 12:33:58 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 13:58:56 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ namespace ft {
 			typedef typename allocator_type::reference						reference;
 			typedef typename allocator_type::const_reference				const_reference;
 			typedef size_t													size_type;
-			typedef ptrdiff_t												difference_type;
 			typedef typename allocator_type::pointer						pointer;
 			typedef typename allocator_type::const_pointer					const_pointer;
 			typedef typename ft::random_access_iterator<value_type>			iterator;
 			typedef typename ft::random_access_iterator<const value_type>	const_iterator;
 			typedef typename ft::reverse_iterator<value_type>				reverse_iterator;
+			typedef typename iterator_traits<iterator>::difference_type		difference_type;
 		
 		protected :
 			pointer			_start;
@@ -66,10 +66,10 @@ namespace ft {
 			typename ft::enable_if<ft::is_integral<InputIterator>::value>::type * = NULL)
 			{
 				pointer		ptr = &(*first);
-				size_type	diff = &(*last) - &(*first) + 1;
+				size_type	diff = &(*last) - &(*first);
 				_alloc = alloc;
 				_start = _alloc.allocate(diff);
-				for (size_type i = 0; ptr + i != &(*last) + (size_type)1; i++)
+				for (size_type i = 0; ptr + i != &(*last); i++)
 					_alloc.construct(_start + i, *(ptr + i));
 				_end = _start + diff;
 				_capacity = diff;
@@ -103,7 +103,7 @@ namespace ft {
 			assign( InputIt first, InputIt last )
 			{
 				this->clear();
-				for(; &(*first) != &(*last) + 1; first++)
+				for(; &(*first) != &(*last); first++)
 					push_back(*first);
 			}
 			vector& operator=(vector const & src)
@@ -172,7 +172,7 @@ namespace ft {
 			{
 				iterator pos = position;
 				pointer ptr = &(*first);
-				for (; ptr != &(*(last + 1)); ptr++)
+				for (; ptr != &(*(last)); ptr++)
 					pos = insert(pos, *ptr);
 			}
 			iterator erase(iterator position)
@@ -193,8 +193,8 @@ namespace ft {
 			iterator erase(iterator first, iterator last)
 			{
 				pointer ptr1 = &(*first);
-				size_type diff = &(*last) - ptr1 + 1;
-				if (&(*last) != _end - 1)
+				size_type diff = &(*last) - ptr1;
+				if (&(*last) != _end)
 				{
 					for (; (ptr1 + diff) != _end;)
 					{

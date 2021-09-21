@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 11:38:02 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 13:57:18 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,7 @@ int	main(void)
 	for (; it2 != end2; it2++)
 		std::cout << *it2 << std::endl;
 	std::cout << "===================== Standard range lst3" << std::endl;
-	it = lst.begin();
-	tmp = lst.end();
-	ft::vector<int> lst3(it, --tmp);
+	ft::vector<int> lst3(lst.begin(), lst.end());
 	it3 = lst3.begin();
 	end3 = lst3.end();
 	std::cout << &(*it3) << std::endl;
@@ -174,7 +172,6 @@ int	main(void)
 	it2 = lst2.begin();
 	end2 = lst2.end();
 	tmp = end2;
-	--tmp;
 	for (; it2 != end2; it2++)
 		std::cout << *it2 << std::endl;
 	std::cout << "==" << std::endl;

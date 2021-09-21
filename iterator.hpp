@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 12:31:35 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/21 13:02:57 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ namespace ft {
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer			pointer;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference			reference;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category	iterator_category;
-		public :
+
 			random_access_iterator(void) : _current(NULL) {}
 			random_access_iterator(pointer ptr) : _current(ptr) {}
 			random_access_iterator(random_access_iterator const &rhs) : _current(rhs._current) {}
