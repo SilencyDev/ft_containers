@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 16:19:33 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/23 15:27:12 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,15 +126,43 @@ namespace ft {
 			{
 				return (this->_current < rhs._current);
 			}
-			reference operator+=(random_access_iterator const &rhs)
+			reference operator[](difference_type n)
+			{
+				return (this->_current[n]);
+			}
+			random_access_iterator operator+=(random_access_iterator const &rhs)
 			{
 				this->_current = this->_current + rhs._current;
 				return (this->_current);
 			}
-			reference operator-=(random_access_iterator const &rhs)
+			random_access_iterator operator-=(random_access_iterator const &rhs)
 			{
 				this->_current = this->_current - rhs._current;
 				return (this->_current);
+			}
+			random_access_iterator operator+=(difference_type n)
+			{
+				return (this->_current = this->_current + n);
+			}
+			random_access_iterator operator-=(difference_type n)
+			{
+				return (this->_current = this->_current - n);
+			}
+			random_access_iterator operator+(difference_type n) const
+			{
+				return (this->_current + n);
+			}
+			random_access_iterator operator-(difference_type n) const
+			{
+				return (this->_current - n);
+			}
+			difference_type operator+(random_access_iterator n) const
+			{
+				return (this->_current + n._current);
+			}
+			difference_type operator-(random_access_iterator n) const
+			{
+				return (this->_current - n._current);
 			}
 			reference operator*()
 			{
@@ -192,6 +220,10 @@ namespace ft {
 				operator++();
 				return (tmp);
 			}
+			reference operator[](difference_type n)
+			{
+				return (this->_current[n]);
+			}
 			bool operator==(reverse_iterator const &rhs)
 			{
 				return (this->_current == rhs._current);
@@ -216,15 +248,37 @@ namespace ft {
 			{
 				return (this->_current < rhs._current);
 			}
-			reference operator+=(reverse_iterator const &rhs)
+			reverse_iterator operator+=(reverse_iterator const &rhs)
 			{
-				this->_current = this->_current + rhs._current;
-				return (this->_current);
+				return (this->_current = this->_current - rhs._current);
 			}
-			reference operator-=(reverse_iterator const &rhs)
+			reverse_iterator operator-=(reverse_iterator const &rhs)
 			{
-				this->_current = this->_current - rhs._current;
-				return (this->_current);
+				return (this->_current = this->_current + rhs._current);
+			}
+			reverse_iterator operator+=(difference_type n)
+			{
+				return (this->_current = this->_current - n);
+			}
+			reverse_iterator operator-=(difference_type n)
+			{
+				return (this->_current = this->_current + n);
+			}
+			reverse_iterator operator+(difference_type n) const
+			{
+				return (this->_current - n);
+			}
+			reverse_iterator operator-(difference_type n) const
+			{
+				return (this->_current + n);
+			}
+			difference_type operator+(reverse_iterator n) const
+			{
+				return (this->_current - n._current);
+			}
+			difference_type operator-(reverse_iterator n) const
+			{
+				return (this->_current + n._current);
 			}
 			reference operator*()
 			{

@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/21 18:04:36 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/23 15:39:29 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,9 @@ namespace ft {
 			}
 			bool empty() const
 			{
-				return (size() ? 1 : 0);
+				if (size())
+					return (0);
+				return (1);
 			}
 			iterator insert(iterator position, const value_type& val)
 			{
@@ -240,7 +242,7 @@ namespace ft {
 						newsize = _capacity * 2;
 					else
 						newsize = SIZE_MAX;
-					if (n > _capacity)
+					if (n > newsize)
 						newsize = n;
 					reserve(newsize);
 					size_type	tmp = n;
