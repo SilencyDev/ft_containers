@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/23 15:39:29 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/24 11:21:21 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define VECTOR_HPP
 # include <iostream>
 # include <memory>
+# include <iterator> // distance
 # include <limits>
 # include "iterator.hpp"
 # include "enable_if.hpp"
@@ -93,10 +94,13 @@ namespace ft {
 			}
 			void assign(size_type n, const value_type& val)
 			{
-				pointer ptr = _start;
-				for (; ptr != _end; ptr++)
-					_alloc.destroy(ptr);
+				this->clear();
+				reserve(n);
 				_end = _start;
+				for(size_type i = 0; _start + i != _start + n; i++) {
+						_alloc.construct(_start + i, val);
+						_end++;
+				}
 				resize(n, val);
 			}
 			template< class InputIt >
@@ -104,24 +108,25 @@ namespace ft {
 			assign( InputIt first, InputIt last )
 			{
 				this->clear();
-				for(; &(*first) != &(*last); first++)
-					push_back(*first);
+				size_type n = std::distance(first, last);
+				if (_capacity >= n)
+				{
+					for(; first != last; first++)
+						push_back(*first);
+				}
+				else
+				{
+					reserve(n);
+					_end = _start;
+					for(; first != last; first++) {
+						_alloc.construct(_end, *first);
+						_end++;
+					}
+				}
 			}
 			vector& operator=(vector const & src)
 			{
-				if (this->size())
-				{
-					pointer ptr = _start;
-					for (; ptr != _end; ptr++)
-						_alloc.destroy(ptr);
-					this->_alloc.deallocate(_start, _capacity);
-					_end = _start;
-				}
-				_start = this->_alloc.allocate(src.size());
-				for(size_type i = 0; i < src.size(); i++)
-					_alloc.construct(_start + i, *(src._start + i));
-				_capacity = src.size();
-				_end = _start + src.size();
+				assign(src.begin(), src.end());
 				return (*this);
 			}
 			allocator_type	get_allocator() const
@@ -150,6 +155,10 @@ namespace ft {
 			}
 			iterator insert(iterator position, const value_type& val)
 			{
+				if (position == NULL)
+					reserve(1);
+				if (position < _start || position >= _end)
+					position = _start;
 				size_type tmp2 = &(*position) - _start;
 				push_back(*(_end - 1));
 				pointer tmp = _end - 1;
@@ -160,22 +169,26 @@ namespace ft {
 				}
 				_alloc.destroy(&(*position));
 				_alloc.construct(&(*position), val);
-				*position = val;
 				return (_start + tmp2);
 			}
 			void insert (iterator position, size_type n, const value_type& val)
 			{
+				if (position == NULL)
+					reserve(1);
+				if (position + n < _start || position + n >= _end)
+					position = _start;
 				iterator pos = position;
 				while (n--)
 					pos = insert(pos, val);
 			}
 			template <class InputIterator>
-			void insert (iterator position, InputIterator first, InputIterator last)
+			typename ft::enable_if<ft::is_integral<InputIterator>::value, void>::type
+			insert (iterator position, InputIterator first, InputIterator last)
 			{
 				iterator pos = position;
-				pointer ptr = &(*first);
-				for (; ptr != &(*(last)); ptr++)
-					pos = insert(pos, *ptr);
+				InputIterator ptr = first;
+				for (; ptr.base() != last.base(); ptr++)
+					pos = insert(pos, *(ptr.base()));
 			}
 			iterator erase(iterator position)
 			{
@@ -276,9 +289,8 @@ namespace ft {
 			}
 			void clear()
 			{
-				size_type tmp = size();
-				while (tmp--)
-					_alloc.destroy(_start + tmp);
+				for (;_start != _end ; _end--)
+					_alloc.destroy(_end - 1);
 				_end = _start;
 			}
 			void swap (vector& x)
@@ -291,9 +303,9 @@ namespace ft {
 				x._end = this->_end;
 				this->_end = ptr;
 
-				allocator_type alloc = x._alloc;
-				x._alloc = this->_alloc;
-				this->_alloc = alloc;
+				// allocator_type alloc = x._alloc;
+				// x._alloc = this->_alloc;
+				// this->_alloc = alloc;
 
 				size_type capacity = x._capacity;
 				x._capacity = this->_capacity;
