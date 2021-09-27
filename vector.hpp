@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/27 15:42:41 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/27 18:41:30 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,28 +155,43 @@ namespace ft {
 			}
 			iterator insert(iterator position, const value_type& val)
 			{
-				if (position == NULL)
-					reserve(1);
-				if (position < _start || position >= _end)
+				size_type tmp2 = 0;
+				if (position.base() != NULL && position.base() < _start)
 					position = _start;
-				size_type tmp2 = &(*position) - _start;
+				else if (position.base() != NULL && position.base() > _end)
+					position = _end;
+				else if (position.base() == NULL)
+				{
+					reserve(1);
+					push_back(val);
+					return (_end - 1);
+				}
+				else if (position.base() == _end && position.base() != _start)
+				{
+					push_back(val);
+					return (_end - 1);
+				}
+				tmp2 = position.base() - _start;
 				push_back(*(_end - 1));
+				position = _start + tmp2;
 				pointer tmp = _end - 1;
 				for(; tmp != (_start + tmp2); tmp--)
 				{
-					_alloc.destroy(tmp);
-					_alloc.construct(tmp, *(tmp - 1));
+						_alloc.destroy(tmp);
+						_alloc.construct(tmp, *(tmp - 1));
 				}
-				_alloc.destroy(&(*position));
-				_alloc.construct(&(*position), val);
-				return (_start + tmp2);
+				_alloc.destroy(position.base());
+				_alloc.construct(position.base(), val);
+				return (position);
 			}
 			void insert (iterator position, size_type n, const value_type& val)
 			{
-				if (position == NULL)
+				if (position.base() == NULL)
 					reserve(1);
-				if (position + n < _start || position + n >= _end)
+				if (position.base() != NULL && position.base() < _start)
 					position = _start;
+				else if (position.base() != NULL && position.base() > _end)
+					position = _end;
 				iterator pos = position;
 				while (n--)
 					pos = insert(pos, val);
@@ -185,14 +200,20 @@ namespace ft {
 			typename ft::enable_if<ft::is_integral<InputIterator>::value, void>::type
 			insert (iterator position, InputIterator first, InputIterator last)
 			{
+				if (_start == NULL)
+					reserve(last - first);
+				if (position.base() != NULL && position.base() < _start)
+					position = _start;
+				else if (position.base() != NULL && position.base() > _end)
+					position = _end;
 				iterator pos = position;
-				InputIterator ptr = first;
-				for (; ptr.base() != last.base(); ptr++)
-					pos = insert(pos, *(ptr.base()));
+				InputIterator ptr = last - 1;
+				for (; ptr != first - 1; ptr--)
+					pos = insert(pos, *(ptr));
 			}
 			iterator erase(iterator position)
 			{
-				pointer ptr = &(*position);
+				pointer ptr = position.base();
 				_alloc.destroy(ptr);
 				if (ptr != _end - 1)
 				{
@@ -203,13 +224,13 @@ namespace ft {
 					}
 				}
 				_end -= 1;
-				return (&(*position));
+				return (position.base());
 			}
 			iterator erase(iterator first, iterator last)
 			{
-				pointer ptr1 = &(*first);
-				size_type diff = &(*last) - ptr1;
-				if (&(*last) != _end)
+				pointer ptr1 = first.base();
+				size_type diff = last.base() - ptr1;
+				if (last.base() != _end)
 				{
 					for (; (ptr1 + diff) != _end;)
 					{
@@ -221,7 +242,7 @@ namespace ft {
 					for (; ptr1 != _end; ptr1++)
 						_alloc.destroy(ptr1);
 				_end -= diff;
-				return (&(*first));
+				return (first.base());
 			}
 			void reserve(size_type n)
 			{
