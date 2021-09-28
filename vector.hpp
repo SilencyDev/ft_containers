@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/28 14:56:06 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/28 16:32:46 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,10 @@ namespace ft {
 
 			~vector()
 			{
-				int tmp = _capacity;
-				while (_capacity--)
-					_alloc.destroy(_start + _capacity);
-				_alloc.deallocate(_start, tmp);
+				int tmp = size();
+				while (tmp--)
+					_alloc.destroy(_start + tmp);
+				_alloc.deallocate(_start, _capacity);
 			}
 			void assign(size_type n, const value_type& val)
 			{
@@ -248,7 +248,7 @@ namespace ft {
 			void reserve(size_type n)
 			{
 				if (n > this->max_size())
-					throw std::length_error("vector");
+					throw std::length_error("allocator<T>::allocate(size_t n) 'n' exceeds maximum supported size");
 				if (n <= this->_capacity)
 					return ;
 				pointer		fresh = _alloc.allocate(n);
@@ -267,7 +267,7 @@ namespace ft {
 			}
 			void resize (size_type n, value_type val = value_type())
 			{
-				size_type	newsize;
+				size_type	newsize = 0;
 				size_type	oldsize = size();
 				if (n > _capacity)
 				{
@@ -287,10 +287,10 @@ namespace ft {
 				}
 				else if (n < size())
 				{
-					size_type tmp = n;
-					while (n++ < size())
-						_alloc.destroy(_start + n);
-					_end = _start + tmp;
+					size_type tmp = size();
+					while (n < tmp--)
+						_alloc.destroy(_start + tmp);
+					_end = _start + n;
 				}
 				else if (n > size())
 				{
@@ -441,7 +441,7 @@ namespace ft {
 		typename ft::vector<T, Alloc>::const_iterator end = lhs.end();
 		typename ft::vector<T, Alloc>::const_iterator end2 = rhs.end();
 
-		return (lexicographical_compare(lhs.begin(), --end, rhs.begin(), --end2));
+		return (ft::lexicographical_compare(lhs.begin(), --end, rhs.begin(), --end2));
 	}
 
 	template< class T, class Alloc >
@@ -456,7 +456,7 @@ namespace ft {
 		typename ft::vector<T, Alloc>::const_iterator end = lhs.end();
 		typename ft::vector<T, Alloc>::const_iterator end2 = rhs.end();
 
-		return (lexicographical_compare(rhs.begin(), --end2, lhs.begin(), --end));
+		return (ft::lexicographical_compare(rhs.begin(), --end2, lhs.begin(), --end));
 	}
 
 	template< class T, class Alloc >
