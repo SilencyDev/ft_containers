@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/28 16:32:46 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/28 20:32:04 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,13 +188,36 @@ namespace ft {
 				else if (position.base() != NULL && position.base() > _end)
 					position = _end;
 				difference_type dist = std::distance(iterator(_start), position);
-				if (position.base() == NULL)
+				if (_start == NULL)
 					reserve(1);
-				if (_capacity * 2 < n + size())
-					reserve(size() + n);
-				iterator pos = _start + dist;;
-				while (n--)
-					pos = insert(pos, val);
+				if (_capacity < n + size())
+				{
+					reserve(_capacity * 2);
+					if (_capacity < n + size())
+						reserve(n + size());
+				}
+				// else
+				// 	reserve(_capacity * 2);
+		
+				ft::vector<value_type> tmp;
+
+				pointer save_start = _start;
+				tmp._start = _alloc.allocate(_capacity);
+				tmp._capacity = _capacity;
+				tmp._end = tmp._start;
+				
+				pointer pos = _start + dist;
+				for (; _start != pos; _start++)
+					_alloc.construct(tmp._end++, *_start);
+				for (size_type i = 0; i < n; i++)
+					_alloc.construct(tmp._end++, val);
+				for (;_start != _end; _start++)
+					_alloc.construct(tmp._end++, *_start);
+				
+				_start = save_start;
+				swap(tmp);
+				// while (n--)
+				// 	pos = insert(pos, val);
 			}
 			template <class InputIterator>
 			typename ft::enable_if<ft::is_integral<InputIterator>::value, void>::type
@@ -206,11 +229,32 @@ namespace ft {
 					position = _end;
 				difference_type dist = std::distance(first, last);
 				difference_type range_pos = std::distance(iterator(_start), position);
-				if (_capacity * 2 < dist + size())
-					reserve(dist + size());
-				iterator pos = _start + range_pos;
+				if (_start == NULL)
+					reserve(1);
+				if (_capacity < dist + size())
+				{
+					reserve(_capacity * 2);
+					if (_capacity < dist + size())
+						reserve(dist + size());
+				}
+				ft::vector<value_type> tmp;
+
+				pointer save_start = _start;
+				tmp._start = _alloc.allocate(_capacity);
+				tmp._capacity = _capacity;
+				tmp._end = tmp._start;
+				
+				pointer pos = _start + range_pos;
+				for (; _start != pos; _start++)
+					_alloc.construct(tmp._end++, *_start);
 				for (; first != last; first++)
-					pos = insert(pos, *(first)) + 1;
+					_alloc.construct(tmp._end++, *(first));
+				for (;_start != _end; _start++)
+					_alloc.construct(tmp._end++, *_start);
+				
+				_start = save_start;
+				swap(tmp);
+				// _alloc.deallocate(tmp._start, tmp._capacity);
 			}
 			iterator erase(iterator position)
 			{
@@ -397,6 +441,14 @@ namespace ft {
 			{
 				return reverse_iterator(begin());
 			}
+			const_reverse_iterator rbegin() const
+			{
+				return const_reverse_iterator(end());
+			}
+			const_reverse_iterator rend() const
+			{
+				return const_reverse_iterator(begin());
+			}
 	};
 
 	template <class T, class Alloc>
@@ -421,12 +473,23 @@ namespace ft {
 		return (first2 != last2);
 	}
 
+	template <class InputIterator1, class InputIterator2>
+	bool equal ( InputIterator1 first1, InputIterator1 last1, InputIterator2 first2 )
+	{
+		while (first1!=last1) {
+			if (!(*first1 == *first2))   // or: if (!pred(*first1,*first2)), for version 2
+				return (false);
+			++first1; ++first2;
+		}
+		return (true);
+	}
+
 	template< class T, class Alloc >
 	bool operator==(const ft::vector<T,Alloc> & lhs, const ft::vector<T,Alloc> & rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return (false);
-		return (!(lhs < rhs) && !(rhs < lhs));
+		return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 	}
 
 	template< class T, class Alloc >
@@ -438,10 +501,7 @@ namespace ft {
 	template< class T, class Alloc >
 	bool operator<(const ft::vector<T,Alloc> & lhs, const ft::vector<T,Alloc> & rhs)
 	{
-		typename ft::vector<T, Alloc>::const_iterator end = lhs.end();
-		typename ft::vector<T, Alloc>::const_iterator end2 = rhs.end();
-
-		return (ft::lexicographical_compare(lhs.begin(), --end, rhs.begin(), --end2));
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
 
 	template< class T, class Alloc >
@@ -453,10 +513,7 @@ namespace ft {
 	template< class T, class Alloc >
 	bool operator>(const ft::vector<T,Alloc> & lhs, const ft::vector<T,Alloc> & rhs)
 	{
-		typename ft::vector<T, Alloc>::const_iterator end = lhs.end();
-		typename ft::vector<T, Alloc>::const_iterator end2 = rhs.end();
-
-		return (ft::lexicographical_compare(rhs.begin(), --end2, lhs.begin(), --end));
+		return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
 	}
 
 	template< class T, class Alloc >
