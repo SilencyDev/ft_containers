@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/27 18:41:30 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/28 14:56:06 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,11 @@ namespace ft {
 			const allocator_type& alloc = allocator_type(),
 			typename ft::enable_if<ft::is_integral<InputIterator>::value>::type * = NULL)
 			{
-				pointer		ptr = &(*first);
-				size_type	diff = &(*last) - &(*first);
+				_capacity = std::distance(first,last);
 				_alloc = alloc;
-				_start = _alloc.allocate(diff);
-				for (size_type i = 0; ptr + i != &(*last); i++)
-					_alloc.construct(_start + i, *(ptr + i));
-				_end = _start + diff;
-				_capacity = diff;
+				_start = _alloc.allocate(_capacity);
+				_end = _start + _capacity;
+				assign(first, last);
 			}
 			vector(const vector& x)
 			{
@@ -186,13 +183,16 @@ namespace ft {
 			}
 			void insert (iterator position, size_type n, const value_type& val)
 			{
-				if (position.base() == NULL)
-					reserve(1);
 				if (position.base() != NULL && position.base() < _start)
 					position = _start;
 				else if (position.base() != NULL && position.base() > _end)
 					position = _end;
-				iterator pos = position;
+				difference_type dist = std::distance(iterator(_start), position);
+				if (position.base() == NULL)
+					reserve(1);
+				if (_capacity * 2 < n + size())
+					reserve(size() + n);
+				iterator pos = _start + dist;;
 				while (n--)
 					pos = insert(pos, val);
 			}
@@ -200,16 +200,17 @@ namespace ft {
 			typename ft::enable_if<ft::is_integral<InputIterator>::value, void>::type
 			insert (iterator position, InputIterator first, InputIterator last)
 			{
-				if (_start == NULL)
-					reserve(last - first);
 				if (position.base() != NULL && position.base() < _start)
 					position = _start;
 				else if (position.base() != NULL && position.base() > _end)
 					position = _end;
-				iterator pos = position;
-				InputIterator ptr = last - 1;
-				for (; ptr != first - 1; ptr--)
-					pos = insert(pos, *(ptr));
+				difference_type dist = std::distance(first, last);
+				difference_type range_pos = std::distance(iterator(_start), position);
+				if (_capacity * 2 < dist + size())
+					reserve(dist + size());
+				iterator pos = _start + range_pos;
+				for (; first != last; first++)
+					pos = insert(pos, *(first)) + 1;
 			}
 			iterator erase(iterator position)
 			{
