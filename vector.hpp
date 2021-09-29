@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/28 20:32:04 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/29 14:26:41 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,8 @@ namespace ft {
 			}
 			vector& operator=(vector const & src)
 			{
-				assign(src.begin(), src.end());
+				if (*this != src)
+					assign(src.begin(), src.end());
 				return (*this);
 			}
 			allocator_type	get_allocator() const
@@ -196,9 +197,6 @@ namespace ft {
 					if (_capacity < n + size())
 						reserve(n + size());
 				}
-				// else
-				// 	reserve(_capacity * 2);
-		
 				ft::vector<value_type> tmp;
 
 				pointer save_start = _start;
@@ -216,8 +214,6 @@ namespace ft {
 				
 				_start = save_start;
 				swap(tmp);
-				// while (n--)
-				// 	pos = insert(pos, val);
 			}
 			template <class InputIterator>
 			typename ft::enable_if<ft::is_integral<InputIterator>::value, void>::type
@@ -254,7 +250,6 @@ namespace ft {
 				
 				_start = save_start;
 				swap(tmp);
-				// _alloc.deallocate(tmp._start, tmp._capacity);
 			}
 			iterator erase(iterator position)
 			{
@@ -346,7 +341,19 @@ namespace ft {
 			}
 			void push_back (const value_type& val)
 			{
-				resize(size() + 1, val);
+				size_type	newsize = 0;
+				if (size() + 1 > _capacity)
+				{
+					if (_capacity == 0)
+						newsize = 1;
+					else if (_capacity + 1 < SIZE_MAX / 2)
+						newsize = _capacity * 2;
+					else
+						newsize = SIZE_MAX;
+					reserve(newsize);
+				}
+				_alloc.construct(_end++, val);
+				// resize(size() + 1, val);
 			}
 			void pop_back()
 			{
