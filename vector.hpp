@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/29 14:26:41 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/29 14:49:01 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ namespace ft {
 				_start = NULL;
 				_end = NULL;
 				_capacity = 0;
+				_alloc = x._alloc;
 				if (this != &x)
 					*this = x;
 			}

@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 10:41:50 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/29 13:42:49 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/29 14:52:58 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace ft {
 	class stack
 	{	
 		public:
-			typedef T		value_type;
+			typedef T				value_type;
 			typedef Container		container_type;
 			typedef size_t			size_type;
 		protected:
