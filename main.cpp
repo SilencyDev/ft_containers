@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/29 17:43:52 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/30 11:49:29 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "vector.hpp"
 #include "stack.hpp"
 #include "pair.hpp"
+#include "map.hpp"
 #include "iterator.hpp"
 
 #include <stdlib.h>

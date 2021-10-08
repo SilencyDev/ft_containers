@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 16:53:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/29 17:43:33 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/09/30 11:48:58 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@ namespace ft {
 		pair& operator= (const pair& pr)
 		{
 			if (*this != pr)
-				*this = pr;
+			{
+				first = pr.first;
+				second = pr.second;
+			}
 			return (*this);
 		}
 

@@ -6,13 +6,14 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/27 15:54:32 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/08 18:48:12 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATOR_HPP
 # define ITERATOR_HPP
 # include <iostream>
+# include "pair.hpp"
 
 namespace ft {
 
@@ -41,6 +42,103 @@ namespace ft {
 		typedef	const T*						pointer;
 		typedef	const T&						reference;
 		typedef	std::random_access_iterator_tag	iterator_category;
+	};
+
+	template < class T >
+	class bidirectional_iterator
+	{
+		private :
+			typedef iterator_traits<T> it;
+		public :
+			typedef typename it::value_type						value_type;
+			typedef typename it::difference_type				difference_type;
+			typedef typename it::pointer						pointer;
+			typedef typename T::value_type						pair;
+			typedef typename it::reference						reference;
+			typedef typename std::bidirectional_iterator_tag	iterator_category;
+
+			bidirectional_iterator(void) : _current(NULL), _last(NULL) {}
+			bidirectional_iterator(pointer ptr, pointer last) : _current(ptr), _last(last) {}
+			template <class Ts>
+			bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it.getlast()) {}
+			~bidirectional_iterator(void) {}
+			bidirectional_iterator &operator++(void)
+			{
+				if (!_current)
+					return (_current);
+				
+				if (_current->right)
+				{
+					_current = _current->right;
+					while (_current->left)
+						_current = _current->left;
+				}
+				else
+				{
+					while (_current->parent && _current == _current->parent->right)
+						_current = _current->parent;
+					_current = _current->parent;
+				}
+				return (_current);
+			}
+			bidirectional_iterator operator++(int)
+			{
+				bidirectional_iterator tmp(*this);
+
+				operator++();
+				return (tmp);
+			}
+			bidirectional_iterator &operator--(void)
+			{
+				if (!_current)
+					return (_current);
+				
+				if (_current->left)
+				{
+					_current = _current->left;
+					while (_current->right)
+						_current = _current->right;
+				}
+				else
+				{
+					while (_current->parent && _current == _current->parent->left)
+						_current = _current->parent;
+					_current = _current->parent;
+				}
+				return (_current);
+			}
+			bidirectional_iterator operator--(int)
+			{
+				bidirectional_iterator tmp(*this);
+
+				operator--();
+				return (tmp);
+			}
+			template<class Ts>
+			bidirectional_iterator &operator=(ft::bidirectional_iterator<Ts> const &rhs)
+			{
+				this->_current = rhs.base_node();
+				return (*this);
+			}
+			pair operator*()
+			{
+				return (this->_current->value);
+			}
+			pointer operator->()
+			{
+				return (&(operator*()));
+			}
+			pair* base() const
+			{
+				return (&(_current->value));
+			}
+			pointer	base_node() const
+			{
+				return (_current);
+			}
+		protected :
+			pointer	_current;
+			pointer	_last;
 	};
 
 	template < class T >
