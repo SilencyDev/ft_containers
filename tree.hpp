@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/08 18:47:35 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/12 18:46:37 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,15 @@
 
 namespace ft {
 	template < class T >
-	struct node
+	class node
 	{
-		node*	parent;
-		node*	left;
-		node*	right;
-		T		content;
+		public :
+			typedef T		pair;
+			node(T pair) : parent(NULL), left(NULL), right(NULL), content(pair) {}
+			node*	parent;
+			node*	left;
+			node*	right;
+			T		content;
 	};
 	template < class T,
 				class Compare,
@@ -39,42 +42,72 @@ namespace ft {
 			typedef typename allocator_type::const_reference			const_reference;
 			typedef typename allocator_type::pointer					pointer;
 			typedef typename allocator_type::const_pointer				const_pointer;
-			typedef typename ft::bidirectional_iterator<pointer>		iterator;
-			typedef typename ft::bidirectional_iterator<const_pointer>	const_iterator;
+			typedef typename ft::bidirectional_iterator<node>			iterator;
+			typedef typename ft::const_bidirectional_iterator<const node>	const_iterator;
 			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
-			typedef typename iterator_traits<iterator>::difference_type	difference_type;
+			typedef ptrdiff_t											difference_type;
 			typedef size_t												size_type;
-		protected :
+		public :
 			node*			root;
 			node*			_last;
 			allocator_type	_alloc;
 			key_compare		_key_compare;
 		private :
-			node *create_node(value_type element)
+			node *create_node(value_type element, node* parent = NULL)
 			{
 				node *node;
 				node = _alloc.allocate(1);
-				node->left = NULL;
-				node->right = NULL;
-				node->parent = NULL;
-				node->content = element;
+				_alloc.construct(node, element);
+				node->parent = parent;
 				return (node);
 			}
-			node *find(node *root, value_type element)
+			void    btree_display(node *root, int space)
 			{
-				node *ret = NULL;
-				if (!root)
-					return (NULL);
-				ret = find(root, element);
-				if (!ret && !_key_compare(element.first, root->left->content.first)
-					&& !_key_compare(element.first, root->right->content.first))
-					return (root);
-				if (!ret)
-					ret = find(root->right, element);
-				return (root);
+				int    i = 5;
+
+				if (root == NULL)
+					return ;
+				space += 5;
+				btree_display(root->right, space);
+				while (i++ < space)
+					std::cerr << " ";
+				std::cerr << root->content.first << " - " <<  root->content.second << std::endl;
+				btree_display(root->left, space);
 			}
 		public :
+			tree(void) : root(NULL), _last(NULL), _alloc(allocator_type()), _key_compare(key_compare()) {}
+			tree(key_compare key) : root(NULL), _last(NULL), _alloc(allocator_type()), _key_compare(key) {}
+			node *find(node* nodes, value_type element) const
+			{
+				node* ret = NULL;
+				if (!nodes)
+					return (NULL);
+				ret = find(nodes->left, element);
+				if (!ret && !_key_compare(nodes->content.first, element.first)
+					&& !_key_compare(element.first, nodes->content.first))
+					return (nodes);
+				if (!ret)
+					ret = find(nodes->right, element);
+				return (ret);
+			}
+			void clear(node *node)
+			{
+				if (!node)
+					return ;
+				clear(node->left);
+				clear(node->right);
+				_alloc.destroy(node);
+				root = NULL;
+			}
+			node* setlast() const
+			{
+				node* tmp = root;
+				if (tmp != NULL)
+					while (tmp->right)
+						tmp = tmp->right;
+				return (tmp);
+			}
 			node* getlast() const
 			{
 				return (_last);
@@ -85,7 +118,7 @@ namespace ft {
 				if (root)
 					while (tmp->left != NULL)
 						tmp = tmp->left;
-				return (tmp);
+				return iterator(tmp, getlast());
 			}
 			const_iterator begin() const
 			{
@@ -93,35 +126,42 @@ namespace ft {
 				if (root)
 					while (tmp->left != NULL)
 						tmp = tmp->left;
-				return (tmp);
+				return const_iterator(tmp, getlast());
 			}
 			iterator end()
 			{
-				return (iterator(NULL));
+				return iterator(NULL, setlast());
 			}
 			const_iterator end() const
 			{
-				return (iterator(NULL));
+				return const_iterator(NULL, setlast());
 			}
-			node *insert(node **root, value_type element)
+			node *insert(value_type element)
 			{
-				if (!(*root))
-					(*root) = create_node(element);
-				else if (_key_compare(element.first, (*root)->content.first))
+				node* tmp = root;
+				// btree_display(root, 10);
+				if (!root)
+					return (root = create_node(element));
+				while (tmp)
 				{
-					if ((*root)->left)
-						insert(&(*root)->left, element);
+					if (_key_compare(element.first, tmp->content.first))
+					{
+						if (tmp->left)
+							tmp = tmp->left;
+						else
+							return (tmp->left = create_node(element, tmp));
+					}
+					else if (_key_compare(tmp->content.first, element.first))
+					{
+						if (tmp->right)
+							tmp = tmp->right;
+						else
+							return (tmp->right = create_node(element, tmp));
+					}
 					else
-						return ((*root)->left = create_node(element));
+						break;
 				}
-				else if (_key_compare((*root)->content.first), element.first)
-				{
-					if ((*root)->right)
-						insert(&(*root)->right, element);
-					else
-						return ((*root)->right = create_node(element, *root));
-				}
-				return (NULL);
+				return (tmp);
 			}
 	};
 }

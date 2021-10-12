@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/08 18:35:00 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/12 18:51:15 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 # define MAP_HPP
 # include <memory>
 # include <map>
+# include "vector.hpp"
 # include "tree.hpp"
 # include "iterator.hpp"
+# include "pair.hpp"
 
 namespace ft {
 	template <	class Key,
@@ -25,21 +27,24 @@ namespace ft {
 	>
 	class map {
 		public :
-			typedef Key																key_type;
-			typedef T																mapped_type;
-			typedef	pair<const key_type, mapped_type>								value_type;
-			typedef Compare															key_compare;
-			typedef Alloc															allocator_type;
-			typedef typename allocator_type::reference								reference;
-			typedef typename allocator_type::const_reference						const_reference;
-			typedef typename allocator_type::pointer								pointer;
-			typedef typename allocator_type::const_pointer							const_pointer;
-			typedef typename ft::tree<value_type, Compare>::iterator				iterator;
-			typedef typename ft::tree<value_type, Compare>::const_iterator			const_iterator;
-			typedef typename ft::tree<value_type, Compare>::reverse_iterator		reverse_iterator;
-			typedef typename ft::tree<value_type, Compare>::const_reverse_iterator	const_reverse_iterator;
-			typedef typename iterator_traits<iterator>::difference_type				difference_type;
-			typedef size_t															size_type;
+			typedef Key													key_type;
+			typedef T													mapped_type;
+			typedef	pair<const key_type, mapped_type>					value_type;
+			typedef Compare												key_compare;
+			typedef Alloc												allocator_type;
+			typedef typename allocator_type::reference					reference;
+			typedef typename allocator_type::const_reference			const_reference;
+			typedef typename allocator_type::pointer					pointer;
+			typedef typename allocator_type::const_pointer				const_pointer;
+		private :
+			typedef typename ft::tree<value_type, Compare, allocator_type> tree;
+		public :
+			typedef typename tree::iterator								iterator;
+			typedef typename tree::const_iterator						const_iterator;
+			typedef typename tree::reverse_iterator						reverse_iterator;
+			typedef typename tree::const_reverse_iterator				const_reverse_iterator;
+			typedef ptrdiff_t											difference_type;
+			typedef size_t												size_type;
 
 		protected:
 			allocator_type						_alloc;
@@ -52,56 +57,111 @@ namespace ft {
 			const allocator_type& alloc = allocator_type())
 			: _alloc(alloc), _key_compare(comp), _tree(), _size(0) {}
 			
-			// template <class InputIterator>
-			// map (InputIterator first, InputIterator last,
-			// const key_compare& comp = key_compare(),
-			// const allocator_type& alloc = allocator_type())
-			// {
-			// 	;
-			// }
+			template <class InputIterator>
+			map (InputIterator first, InputIterator last,
+			const key_compare& comp = key_compare(),
+			const allocator_type& alloc = allocator_type())
+			{
+				_alloc = alloc;
+				_key_compare = comp;
+				_size = 0;
+				_tree = tree();
+				while (first != last)
+				{
+					_tree.insert(*first++);
+					_size++;
+				}
+			}
 			map (const map& x)
 			{
 				_alloc = x._alloc;
-				if (*this != x)
+				if (this != &x)
 					*this = x;
-				return (*this);
 			}
 			map& operator=(const map& x)
 			{
-				if (*this != x)
+				if (this != &x)
 				{
-					_tree = x._tree;
+					clear();
+					insert(x.begin(), x.end());
 					_key_compare = x._key_compare;
 					_size = x._size;
 				}
 				return (*this);
 			}
-			~map();
+			mapped_type& operator[] (const key_type& k)
+			{
+				return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
+			}
+			~map() {}
+			iterator find (const key_type& k)
+			{
+				if (_tree.find(_tree.root, ft::make_pair(k, "hello")) != NULL)
+					return iterator(_tree.find(_tree.root, ft::make_pair(k, "hello")));
+				return (end());
+			}
+			const_iterator find (const key_type& k) const
+			{
+				if (_tree.find(_tree.root, ft::make_pair(k, "hello")))
+					return const_iterator(_tree.find(_tree.root, ft::make_pair(k, "hello")));
+				return (end());
+			}
+			pair<iterator,bool> insert (const value_type& val)
+			{
+				bool exist = _tree.find(_tree.root, val) != NULL ? false : true;
+				_tree.insert(val);
+				if (exist)
+					_size++;
+				return(ft::make_pair(iterator(_tree.find(_tree.root, val)), exist));
+			}
+			iterator insert (iterator position, const value_type& val)
+			{
+				(void)position;
+				insert(val);
+				return iterator(_tree.find(_tree.root, val));
+			}
+			template <class InputIterator>
+			void insert (InputIterator first, InputIterator last)
+			{
+				while (first != last)
+					insert(*first++);
+			}
+			size_type count (const key_type& k) const
+			{
+				if (_tree.find(_tree.root, ft::make_pair(k, "hello")))
+					return (1);
+				return (0);
+			}
+			void clear()
+			{
+				_tree.clear(_tree.root);
+				_size = 0;
+			}
 			iterator begin()
 			{
-				return (_tree.begin());
+				return iterator(_tree.begin());
 			}
 			const_iterator begin() const
 			{
-				return (_tree.begin());
+				return const_iterator(_tree.begin());
 			}
 			iterator end()
 			{
-				return (_tree.end());
+				return iterator(_tree.end());
 			}
 			const_iterator end() const
 			{
-				return (_tree.end());
+				return const_iterator(_tree.end());
 			}
 			reverse_iterator rbegin()
 			{
-				return (_tree.rbegin());
+				return reverse_iterator(_tree.rbegin());
 			}
 			const_reverse_iterator rbegin() const
 			{
-				return (_tree.rbegin());
+				return const_reverse_iterator(_tree.rbegin());
 			}
-			class value_compare : public std::binary_function<value_type,value_type,bool>
+			class value_compare : public std::binary_function<value_type, value_type, bool>
 			{
 				// friend class ft::map;
 				protected:
@@ -118,7 +178,7 @@ namespace ft {
 			};
 			value_compare value_comp() const
 			{
-				return (value_compare(key_compare()));
+				return (value_compare(_key_compare()));
 			}
 
 			allocator_type	get_allocator() const
@@ -131,7 +191,10 @@ namespace ft {
 					return (_alloc.max_size() / 2);
 				return (_alloc.max_size());
 			}
-			size_type	size() const;
+			size_type	size() const
+			{
+				return _size;
+			}
 			bool empty() const
 			{
 				if (size() > 0)
@@ -139,5 +202,48 @@ namespace ft {
 				return (true);
 			}
 	};
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator== ( const map<Key,T,Compare,Alloc>& lhs,
+					const map<Key,T,Compare,Alloc>& rhs )
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator!= ( const map<Key,T,Compare,Alloc>& lhs,
+					const map<Key,T,Compare,Alloc>& rhs )
+	{
+		return (!(lhs == rhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<  ( const map<Key,T,Compare,Alloc>& lhs,
+					const map<Key,T,Compare,Alloc>& rhs )
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<= ( const map<Key,T,Compare,Alloc>& lhs,
+					const map<Key,T,Compare,Alloc>& rhs )
+	{
+		return (!(rhs < lhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>  ( const map<Key,T,Compare,Alloc>& lhs,
+					const map<Key,T,Compare,Alloc>& rhs )
+	{
+		return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>= ( const map<Key,T,Compare,Alloc>& lhs,
+					const map<Key,T,Compare,Alloc>& rhs )
+	{
+		return (!(lhs < rhs));
+	}
 }
 #endif
