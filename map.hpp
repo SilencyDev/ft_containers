@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/12 18:51:15 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:21:06 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,7 @@ namespace ft {
 				_size = 0;
 				_tree = tree();
 				while (first != last)
-				{
-					_tree.insert(*first++);
-					_size++;
-				}
+					insert(*first++);
 			}
 			map (const map& x)
 			{
@@ -103,12 +100,12 @@ namespace ft {
 			const_iterator find (const key_type& k) const
 			{
 				if (_tree.find(_tree.root, ft::make_pair(k, "hello")))
-					return const_iterator(_tree.find(_tree.root, ft::make_pair(k, "hello")));
+					return const_iterator(reinterpret_cast<typename tree::const_node_ptr>(_tree.find(_tree.root, ft::make_pair(k, "hello"))));
 				return (end());
 			}
 			pair<iterator,bool> insert (const value_type& val)
 			{
-				bool exist = _tree.find(_tree.root, val) != NULL ? false : true;
+				bool exist = _tree.find(_tree.root, val) == NULL ? true : false;
 				_tree.insert(val);
 				if (exist)
 					_size++;
@@ -163,7 +160,7 @@ namespace ft {
 			}
 			class value_compare : public std::binary_function<value_type, value_type, bool>
 			{
-				// friend class ft::map;
+				friend class map;
 				protected:
 					Compare comp;
 					value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
@@ -178,9 +175,28 @@ namespace ft {
 			};
 			value_compare value_comp() const
 			{
-				return (value_compare(_key_compare()));
+				return (value_compare(_key_compare));
 			}
-
+			key_compare key_comp() const
+			{
+				return _key_compare;
+			}
+			iterator upper_bound (const key_type& k)
+			{
+				return (_tree.upper_bound(k));
+			}
+			const_iterator upper_bound (const key_type& k) const
+			{
+				return (_tree.upper_bound(k));
+			}
+			iterator lower_bound (const key_type& k)
+			{
+				return (_tree.lower_bound(k));
+			}
+			const_iterator lower_bound (const key_type& k) const
+			{
+				return (_tree.lower_bound(k));
+			}
 			allocator_type	get_allocator() const
 			{
 				return (_alloc);

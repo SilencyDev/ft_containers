@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/12 18:46:37 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:16:49 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,6 @@
 # include "iterator.hpp"
 
 namespace ft {
-	template < class T >
-	class node
-	{
-		public :
-			typedef T		pair;
-			node(T pair) : parent(NULL), left(NULL), right(NULL), content(pair) {}
-			node*	parent;
-			node*	left;
-			node*	right;
-			T		content;
-	};
 	template < class T,
 				class Compare,
 				class Alloc = std::allocator<T>
@@ -35,15 +24,17 @@ namespace ft {
 	class tree {
 		public :
 			typedef	T													value_type;
+			typedef node<const T>										const_node;
 			typedef node<T>												node;
+			typedef const_node*											const_node_ptr;
 			typedef Compare												key_compare;
 			typedef typename Alloc::template rebind<node>::other		allocator_type;
 			typedef typename allocator_type::reference					reference;
 			typedef typename allocator_type::const_reference			const_reference;
 			typedef typename allocator_type::pointer					pointer;
 			typedef typename allocator_type::const_pointer				const_pointer;
-			typedef typename ft::bidirectional_iterator<node>			iterator;
-			typedef typename ft::const_bidirectional_iterator<const node>	const_iterator;
+			typedef typename ft::bidirectional_iterator<T>				iterator;
+			typedef typename ft::const_bidirectional_iterator<const T>	const_iterator;
 			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 			typedef ptrdiff_t											difference_type;
@@ -62,9 +53,9 @@ namespace ft {
 				node->parent = parent;
 				return (node);
 			}
-			void    btree_display(node *root, int space)
+			void	btree_display(node *root, int space)
 			{
-				int    i = 5;
+				int	i = 5;
 
 				if (root == NULL)
 					return ;
@@ -122,11 +113,11 @@ namespace ft {
 			}
 			const_iterator begin() const
 			{
-				node* tmp = root;
+				const_node_ptr tmp = reinterpret_cast<const_node_ptr>(root);
 				if (root)
 					while (tmp->left != NULL)
 						tmp = tmp->left;
-				return const_iterator(tmp, getlast());
+				return const_iterator(tmp, reinterpret_cast<const_node_ptr>(getlast()));
 			}
 			iterator end()
 			{
@@ -134,7 +125,7 @@ namespace ft {
 			}
 			const_iterator end() const
 			{
-				return const_iterator(NULL, setlast());
+				return const_iterator(NULL, reinterpret_cast<const_node_ptr>(setlast()));
 			}
 			node *insert(value_type element)
 			{
@@ -162,6 +153,26 @@ namespace ft {
 						break;
 				}
 				return (tmp);
+			}
+			iterator upper_bound (const value_type& k)
+			{
+				(void)k;
+				return iterator(root);
+			}
+			const_iterator upper_bound (const value_type& k) const
+			{
+				(void)k;
+				return const_iterator(root);
+			}
+			iterator lower_bound (const value_type& k)
+			{
+				(void)k;
+				return iterator(root);
+			}
+			const_iterator lower_bound (const value_type& k) const
+			{
+				(void)k;
+				return const_iterator(root);
 			}
 	};
 }

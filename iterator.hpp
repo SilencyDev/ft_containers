@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/12 18:55:03 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:26:27 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define ITERATOR_HPP
 # include <iostream>
 # include "pair.hpp"
+# include "node.hpp"
 
 namespace ft {
 
@@ -51,17 +52,23 @@ namespace ft {
 		// 	typedef iterator_traits<T> it;
 		public :
 			typedef T											value_type;
-			typedef T*											pointer;
-			typedef T&											reference;
+			typedef value_type*									pointer;
+			typedef value_type&									reference;
+			typedef node<value_type>							node;
+			typedef node*										node_ptr;
 			typedef ptrdiff_t									difference_type;
-			typedef typename value_type::pair					pair;
 			typedef typename std::bidirectional_iterator_tag	iterator_category;
 
 			bidirectional_iterator(void) : _current(NULL), _last(NULL) {}
-			bidirectional_iterator(pointer ptr, pointer last = NULL) : _current(ptr), _last(last) {}
+			bidirectional_iterator(node_ptr ptr, node_ptr last = NULL) : _current(ptr), _last(last) {}
 			template <class Ts>
-			bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it.getlast()) {}
+			bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it._last) {}
+			// template <class Ts>
+			// bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it.getlast()) {}
 			~bidirectional_iterator(void) {}
+			node_ptr	_current;
+			node_ptr	_last;
+
 			bidirectional_iterator &operator++(void)
 			{
 				if (!_current)
@@ -122,25 +129,22 @@ namespace ft {
 				this->_current = rhs.base_node();
 				return (*this);
 			}
-			pair &operator*() const
+			value_type &operator*() const
 			{
-				return (this->_current->content);
+				return (_current->content);
 			}
-			pair* operator->() const
+			pointer operator->() const
 			{
 				return (&(operator*()));
 			}
-			pair* base() const
+			pointer base() const
 			{
 				return (&(_current->content));
 			}
-			pointer	base_node() const
+			node_ptr	base_node() const
 			{
 				return (_current);
 			}
-		protected :
-			pointer	_current;
-			pointer	_last;
 	};
 
 	template <class T1, class T2>
@@ -186,18 +190,23 @@ namespace ft {
 		// private :
 		// 	typedef iterator_traits<T> it;
 		public :
-			typedef const T										value_type;
-			typedef T*											pointer;
-			typedef T&											reference;
+			typedef T											value_type;
+			typedef value_type*									pointer;
+			typedef value_type&									reference;
+			typedef node<value_type>							node;
+			typedef node*										node_ptr;
 			typedef ptrdiff_t									difference_type;
-			typedef const typename value_type::pair				pair;
 			typedef typename std::bidirectional_iterator_tag	iterator_category;
 
 			const_bidirectional_iterator(void) : _current(NULL), _last(NULL) {}
-			const_bidirectional_iterator(pointer ptr, pointer last = NULL) : _current(ptr), _last(last) {}
+			const_bidirectional_iterator(node_ptr ptr, node_ptr last = NULL) : _current(ptr), _last(last) {}
 			template <class Ts>
-			const_bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it.getlast()) {}
+			const_bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it._last) {}
+			template <class Ts>
+			const_bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(reinterpret_cast<node_ptr>(it.base())), _last(reinterpret_cast<node_ptr>(it._last)) {}
 			~const_bidirectional_iterator(void) {}
+			node_ptr	_current;
+			node_ptr	_last;
 			const_bidirectional_iterator &operator++(void)
 			{
 				if (!_current)
@@ -259,25 +268,22 @@ namespace ft {
 				this->_current = rhs.base_node();
 				return (*this);
 			}
-			pair &operator*() const
+			value_type &operator*() const
 			{
-				return (this->_current->content);
+				return (_current->content);
 			}
-			pair* operator->() const
+			pointer operator->() const
 			{
 				return (&(operator*()));
 			}
-			pair* base() const
+			pointer base() const
 			{
 				return (&(_current->content));
 			}
-			pointer	base_node() const
+			node_ptr	base_node() const
 			{
 				return (_current);
 			}
-		protected :
-			pointer	_current;
-			pointer	_last;
 	};
 
 	template <class T1, class T2>
@@ -456,16 +462,16 @@ namespace ft {
 	}
 
 	template <class Iterator>
-	random_access_iterator<Iterator> operator+(
-	typename random_access_iterator<Iterator>::difference_type n,
-	const random_access_iterator<Iterator>& it)
+	ft::random_access_iterator<Iterator> operator+(
+	typename ft::random_access_iterator<Iterator>::difference_type n,
+	const ft::random_access_iterator<Iterator>& it)
 	{
 		return (it + n);
 	}
 	template <class Iterator1, class Iterator2>
-	typename random_access_iterator<Iterator1>::difference_type operator-(
-	const random_access_iterator<Iterator1>& lhs,
-	const random_access_iterator<Iterator2>& rhs)
+	typename ft::random_access_iterator<Iterator1>::difference_type operator-(
+	const ft::random_access_iterator<Iterator1>& lhs,
+	const ft::random_access_iterator<Iterator2>& rhs)
 	{
 		return (lhs.base() - rhs.base());
 	}

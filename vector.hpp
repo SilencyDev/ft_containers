@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/29 14:49:01 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/13 13:59:52 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,9 +287,9 @@ namespace ft {
 			}
 			void reserve(size_type n)
 			{
-				if (n > this->max_size())
+				if (n > max_size())
 					throw std::length_error("allocator<T>::allocate(size_t n) 'n' exceeds maximum supported size");
-				if (n <= this->_capacity)
+				if (n <= _capacity)
 					return ;
 				pointer		fresh = _alloc.allocate(n);
 				size_type	current_size = size();
@@ -303,7 +303,7 @@ namespace ft {
 				current_size = size();
 				_start = fresh;
 				_end = _start + current_size;
-				this->_capacity = n;
+				_capacity = n;
 			}
 			void resize (size_type n, value_type val = value_type())
 			{
@@ -342,6 +342,7 @@ namespace ft {
 			}
 			void push_back (const value_type& val)
 			{
+				value_type	tmp = val;
 				size_type	newsize = 0;
 				if (size() + 1 > _capacity)
 				{
@@ -353,7 +354,7 @@ namespace ft {
 						newsize = SIZE_MAX;
 					reserve(newsize);
 				}
-				_alloc.construct(_end++, val);
+				_alloc.construct(_end++, tmp);
 				// resize(size() + 1, val);
 			}
 			void pop_back()
