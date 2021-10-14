@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/13 16:26:27 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/14 12:41:14 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ namespace ft {
 			bidirectional_iterator(void) : _current(NULL), _last(NULL) {}
 			bidirectional_iterator(node_ptr ptr, node_ptr last = NULL) : _current(ptr), _last(last) {}
 			template <class Ts>
-			bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it._last) {}
+			bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(it.base_node()), _last(it._last) {}
 			// template <class Ts>
 			// bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it.getlast()) {}
 			~bidirectional_iterator(void) {}
@@ -159,30 +159,30 @@ namespace ft {
 	{
 		return (lhs.base() != rhs.base());
 	}
-	template <class T1, class T2>
-	bool operator<=(ft::bidirectional_iterator<T1> const &lhs,
-					ft::bidirectional_iterator<T2> const &rhs)
-	{
-		return (lhs.base() <= rhs.base());
-	}
-	template <class T1, class T2>
-	bool operator>=(ft::bidirectional_iterator<T1> const &lhs,
-					ft::bidirectional_iterator<T2> const &rhs)
-	{
-		return (lhs.base() >= rhs.base());
-	}
-	template <class T1, class T2>
-	bool operator>(ft::bidirectional_iterator<T1> const &lhs,
-					ft::bidirectional_iterator<T2> const &rhs)
-	{
-		return (lhs.base() > rhs.base());
-	}
-	template <class T1, class T2>
-	bool operator<(ft::bidirectional_iterator<T1> const &lhs,
-					ft::bidirectional_iterator<T2> const &rhs)
-	{
-		return (lhs.base() < rhs.base());
-	}
+	// template <class T1, class T2>
+	// bool operator<=(ft::bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() <= rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator>=(ft::bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() >= rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator>(ft::bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() > rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator<(ft::bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() < rhs.base());
+	// }
 
 	template < class T >
 	class const_bidirectional_iterator
@@ -201,9 +201,9 @@ namespace ft {
 			const_bidirectional_iterator(void) : _current(NULL), _last(NULL) {}
 			const_bidirectional_iterator(node_ptr ptr, node_ptr last = NULL) : _current(ptr), _last(last) {}
 			template <class Ts>
-			const_bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it._last) {}
+			const_bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base_node()), _last(it._last) {}
 			template <class Ts>
-			const_bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(reinterpret_cast<node_ptr>(it.base())), _last(reinterpret_cast<node_ptr>(it._last)) {}
+			const_bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(reinterpret_cast<node_ptr>(it.base_node())), _last(reinterpret_cast<node_ptr>(it._last)) {}
 			~const_bidirectional_iterator(void) {}
 			node_ptr	_current;
 			node_ptr	_last;
@@ -211,7 +211,6 @@ namespace ft {
 			{
 				if (!_current)
 					return *this;
-				
 				if (_current->right)
 				{
 					_current = _current->right;
@@ -298,30 +297,68 @@ namespace ft {
 	{
 		return (lhs.base() != rhs.base());
 	}
-	template <class T1, class T2>
-	bool operator<=(ft::const_bidirectional_iterator<T1> const &lhs,
-					ft::const_bidirectional_iterator<T2> const &rhs)
+	// template <class T1, class T2>
+	// bool operator<=(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::const_bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() <= rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator>=(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::const_bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() >= rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator>(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::const_bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() > rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator<(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::const_bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() < rhs.base());
+	// }
+
+	// const / bi
+		template <class T1, class T2>
+	bool operator==(ft::const_bidirectional_iterator<T1> const &lhs,
+					ft::bidirectional_iterator<T2> const &rhs)
 	{
-		return (lhs.base() <= rhs.base());
+		return (lhs.base() == rhs.base());
 	}
 	template <class T1, class T2>
-	bool operator>=(ft::const_bidirectional_iterator<T1> const &lhs,
-					ft::const_bidirectional_iterator<T2> const &rhs)
+	bool operator!=(ft::const_bidirectional_iterator<T1> const &lhs,
+					ft::bidirectional_iterator<T2> const &rhs)
 	{
-		return (lhs.base() >= rhs.base());
+		return (lhs.base() != rhs.base());
 	}
-	template <class T1, class T2>
-	bool operator>(ft::const_bidirectional_iterator<T1> const &lhs,
-					ft::const_bidirectional_iterator<T2> const &rhs)
-	{
-		return (lhs.base() > rhs.base());
-	}
-	template <class T1, class T2>
-	bool operator<(ft::const_bidirectional_iterator<T1> const &lhs,
-					ft::const_bidirectional_iterator<T2> const &rhs)
-	{
-		return (lhs.base() < rhs.base());
-	}
+	// template <class T1, class T2>
+	// bool operator<=(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() <= rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator>=(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() >= rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator>(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() > rhs.base());
+	// }
+	// template <class T1, class T2>
+	// bool operator<(ft::const_bidirectional_iterator<T1> const &lhs,
+	// 				ft::bidirectional_iterator<T2> const &rhs)
+	// {
+	// 	return (lhs.base() < rhs.base());
+	// }
 
 	template < class T >
 	class random_access_iterator
@@ -547,11 +584,13 @@ namespace ft {
 			{
 				return reverse_iterator(this->_it + n);
 			}
-			reference operator*()
+			reference operator*() const
 			{
-				return (*(_it - 1));
+				iterator_type tmp = _it;
+
+				return (*(--tmp));
 			}
-			pointer operator->()
+			pointer operator->() const
 			{
 				return (&(operator*()));
 			}

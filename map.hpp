@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/13 16:21:06 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/14 13:08:16 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ namespace ft {
 		protected:
 			allocator_type						_alloc;
 			key_compare							_key_compare;
-			ft::tree<value_type, Compare>		_tree;
+			tree								_tree;
 			size_type							_size;
 			
 		public :
@@ -152,11 +152,19 @@ namespace ft {
 			}
 			reverse_iterator rbegin()
 			{
-				return reverse_iterator(_tree.rbegin());
+				return reverse_iterator(end());
 			}
 			const_reverse_iterator rbegin() const
 			{
-				return const_reverse_iterator(_tree.rbegin());
+				return const_reverse_iterator(end());
+			}
+			reverse_iterator rend()
+			{
+				return reverse_iterator(begin());
+			}
+			const_reverse_iterator rend() const
+			{
+				return const_reverse_iterator(begin());
 			}
 			class value_compare : public std::binary_function<value_type, value_type, bool>
 			{
@@ -173,6 +181,23 @@ namespace ft {
 					return comp(x.first, y.first);
 				}
 			};
+			void swap (map& x)
+			{
+				allocator_type	tmp_alloc = _alloc;
+				key_compare		tmp_key = _key_compare;
+				tree			tmp_tree = _tree;
+				size_type		tmp_size = _size;
+
+				_alloc = x._alloc;
+				_key_compare  = x._key_compare;
+				_tree = x._tree;
+				_size = x._size;
+
+				x._alloc = tmp_alloc;
+				x._key_compare = tmp_key;
+				x._tree = tmp_tree;
+				x._size = tmp_size;
+			}
 			value_compare value_comp() const
 			{
 				return (value_compare(_key_compare));
@@ -180,6 +205,14 @@ namespace ft {
 			key_compare key_comp() const
 			{
 				return _key_compare;
+			}
+			pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+			{
+				return ft::make_pair(lower_bound(k), upper_bound(k));
+			}
+			pair<iterator,iterator> equal_range (const key_type& k)
+			{
+				return ft::make_pair(lower_bound(k), upper_bound(k));
 			}
 			iterator upper_bound (const key_type& k)
 			{
