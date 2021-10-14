@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 16:53:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/12 16:02:04 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/14 18:24:58 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace ft {
 		typedef T2		second_type;
 		first_type	first;
 		second_type	second;
-		pair() : first(first_type()), second(second_type()) {}
+		pair() : first(), second() {}
 		template <class U, class V>
 		pair (const pair< U, V>& pr) : first(pr.first), second(pr.second) {}
 		pair (const first_type& a, const second_type& b) : first(a), second(b) {}

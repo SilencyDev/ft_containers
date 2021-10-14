@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/14 11:49:24 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/14 18:22:00 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,11 @@ namespace ft {
 	class tree {
 		public :
 			typedef	T													value_type;
+			typedef typename value_type::first_type						key;
+			typedef typename value_type::second_type					value;
 			typedef node<const T>										const_node;
 			typedef node<T>												node;
+			typedef node*												node_ptr;
 			typedef const_node*											const_node_ptr;
 			typedef Compare												key_compare;
 			typedef typename Alloc::template rebind<node>::other		allocator_type;
@@ -66,12 +69,34 @@ namespace ft {
 				std::cerr << root->content.first << " - " <<  root->content.second << std::endl;
 				btree_display(root->left, space);
 			}
+			node_ptr btree_successor(node_ptr node)
+			{
+				if (node->right)
+				{
+					node = node->right;
+					while (node->left)
+						node = node->left;
+					if (node->right)
+						btree_successor(node->right);
+					return node;
+				}
+				else if (node->left)
+				{
+					node = node->left;
+					while (node->right)
+						node = node->right;
+					if (node->left)
+						btree_successor(node->left);
+					return node;
+				}
+				return node;
+			}
 		public :
 			tree(void) : root(NULL), _last(NULL), _alloc(allocator_type()), _key_compare(key_compare()) {}
 			tree(key_compare key) : root(NULL), _last(NULL), _alloc(allocator_type()), _key_compare(key) {}
-			node *find(node* nodes, value_type element) const
+			node_ptr find(node_ptr nodes, value_type element) const
 			{
-				node* ret = NULL;
+				node_ptr ret = NULL;
 				if (!nodes)
 					return (NULL);
 				ret = find(nodes->left, element);
@@ -82,7 +107,62 @@ namespace ft {
 					ret = find(nodes->right, element);
 				return (ret);
 			}
-			void clear(node *node)
+			bool erase(iterator position)
+			{
+				node_ptr node = position.base_node();
+				if (node == NULL)
+					return false;
+				if (!node->left && !node->right)
+				{
+					if (node->parent)
+					{
+						if (node->parent->left == node)
+							node->parent->left = NULL;
+						else
+							node->parent->right = NULL;
+					}
+					// if (node == root)
+					// 	root = NULL;
+					// _alloc.deallocate(node, 1);
+				}
+				// else
+				// {
+				// 	node_ptr tmp = btree_successor(node);
+				// 	swap(node, tmp);
+				// 	if (tmp->parent)
+				// 	{
+				// 		if (tmp->parent->left == tmp)
+				// 			tmp->parent->left = NULL;
+				// 		else
+				// 			tmp->parent->right = NULL;
+				// 	}
+				// 	_alloc.deallocate(tmp, 1);
+				// }
+				return true;
+			}
+			// void swap(node_ptr node1, node_ptr node2)
+			// {
+			// 	key tmpk = node1->content.first;
+			// 	value tmpv = node1->content.second;
+			// 	node1->content.first = node2->content.first;
+			// 	node1->content.second = node2->content.second;
+			// 	node2->content.first = tmpk;
+			// 	node2->content.second = tmpv;
+			// }
+			// void swap(const_node_ptr node1, const_node_ptr node2) const
+			// {
+			// 	reinterpret_cast<node_ptr>(node1);
+			// 	reinterpret_cast<node_ptr>(node2);
+			// 	key tmpk = node1->content.first;
+			// 	value tmpv = node1->content.second;
+			// 	node1->content.first = node2->content.first;
+			// 	node1->content.second = node2->content.second;
+			// 	node2->content.first = tmpk;
+			// 	node2->content.second = tmpv;
+			// 	reinterpret_cast<const_node_ptr>(node1);
+			// 	reinterpret_cast<const_node_ptr>(node2);
+			// }
+			void clear(node_ptr node)
 			{
 				if (!node)
 					return ;
@@ -91,21 +171,21 @@ namespace ft {
 				_alloc.destroy(node);
 				root = NULL;
 			}
-			node* setlast() const
+			node_ptr setlast() const
 			{
-				node* tmp = root;
+				node_ptr tmp = root;
 				if (tmp != NULL)
 					while (tmp->right)
 						tmp = tmp->right;
 				return (tmp);
 			}
-			node* getlast() const
+			node_ptr getlast() const
 			{
 				return (_last);
 			}
 			iterator begin()
 			{
-				node* tmp = root;
+				node_ptr tmp = root;
 				if (root)
 					while (tmp->left != NULL)
 						tmp = tmp->left;
@@ -127,9 +207,9 @@ namespace ft {
 			{
 				return const_iterator(NULL, reinterpret_cast<const_node_ptr>(setlast()));
 			}
-			node *insert(value_type element)
+			node_ptr insert(value_type element)
 			{
-				node* tmp = root;
+				node_ptr tmp = root;
 				// btree_display(root, 10);
 				if (!root)
 					return (root = create_node(element));
@@ -153,26 +233,6 @@ namespace ft {
 						break;
 				}
 				return (tmp);
-			}
-			iterator upper_bound (const value_type& k)
-			{
-				(void)k;
-				return iterator(root);
-			}
-			const_iterator upper_bound (const value_type& k) const
-			{
-				(void)k;
-				return const_iterator(root);
-			}
-			iterator lower_bound (const value_type& k)
-			{
-				(void)k;
-				return iterator(root);
-			}
-			const_iterator lower_bound (const value_type& k) const
-			{
-				(void)k;
-				return const_iterator(root);
 			}
 	};
 }

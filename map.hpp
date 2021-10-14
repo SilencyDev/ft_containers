@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/14 13:08:16 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/14 18:29:19 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,14 @@ namespace ft {
 			~map() {}
 			iterator find (const key_type& k)
 			{
-				if (_tree.find(_tree.root, ft::make_pair(k, "hello")) != NULL)
-					return iterator(_tree.find(_tree.root, ft::make_pair(k, "hello")));
+				if (_tree.find(_tree.root, ft::make_pair(k, mapped_type())) != NULL)
+					return iterator(_tree.find(_tree.root, ft::make_pair(k, mapped_type())));
 				return (end());
 			}
 			const_iterator find (const key_type& k) const
 			{
-				if (_tree.find(_tree.root, ft::make_pair(k, "hello")))
-					return const_iterator(reinterpret_cast<typename tree::const_node_ptr>(_tree.find(_tree.root, ft::make_pair(k, "hello"))));
+				if (_tree.find(_tree.root, ft::make_pair(k, mapped_type())))
+					return const_iterator(reinterpret_cast<typename tree::const_node_ptr>(_tree.find(_tree.root, ft::make_pair(k, mapped_type()))));
 				return (end());
 			}
 			pair<iterator,bool> insert (const value_type& val)
@@ -123,9 +123,26 @@ namespace ft {
 				while (first != last)
 					insert(*first++);
 			}
+			void erase (iterator position)
+			{
+				if (_tree.erase(position))
+					_size--;
+			}
+			size_type erase (const key_type& k)
+			{
+				size_type exist;
+				exist = _tree.find(_tree.root, ft::make_pair(k, mapped_type())) != NULL ? 1 : 0;
+				_tree.erase(_tree.find(_tree.root, ft::make_pair(k, mapped_type())));
+				return (exist);
+			}
+			void erase (iterator first, iterator last)
+			{
+				for (; first != last; first++)
+					_tree.erase(first);
+			}
 			size_type count (const key_type& k) const
 			{
-				if (_tree.find(_tree.root, ft::make_pair(k, "hello")))
+				if (_tree.find(_tree.root, ft::make_pair(k, mapped_type())))
 					return (1);
 				return (0);
 			}
@@ -216,19 +233,43 @@ namespace ft {
 			}
 			iterator upper_bound (const key_type& k)
 			{
-				return (_tree.upper_bound(k));
+				iterator it = begin();
+				iterator ite = end();
+
+				for (; it != ite; it++)
+					if (_key_compare(k, it->first) == true)
+						break;
+				return (it);
 			}
 			const_iterator upper_bound (const key_type& k) const
 			{
-				return (_tree.upper_bound(k));
+				const_iterator it = begin();
+				const_iterator ite = end();
+
+				for (; it != ite; it++)
+					if (_key_compare(k, it->first) == true)
+						break;
+				return (it);
 			}
 			iterator lower_bound (const key_type& k)
 			{
-				return (_tree.lower_bound(k));
+				iterator it = begin();
+				iterator ite = end();
+
+				for (; it != ite; it++)
+					if (_key_compare(it->first, k) == false)
+						break;
+				return (it);
 			}
 			const_iterator lower_bound (const key_type& k) const
 			{
-				return (_tree.lower_bound(k));
+				const_iterator it = begin();
+				const_iterator ite = end();
+
+				for (; it != ite; it++)
+					if (_key_compare(it->first, k) == false)
+						break;
+				return (it);
 			}
 			allocator_type	get_allocator() const
 			{
@@ -251,6 +292,11 @@ namespace ft {
 				return (true);
 			}
 	};
+	template <class Key, class T, class Compare, class Alloc>
+	void swap(ft::map<Key,T,Compare,Alloc>& x, ft::map<Key,T,Compare,Alloc>& y)
+	{
+		x.swap(y);
+	}
 	template <class Key, class T, class Compare, class Alloc>
 	bool operator== ( const map<Key,T,Compare,Alloc>& lhs,
 					const map<Key,T,Compare,Alloc>& rhs )
