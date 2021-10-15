@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/14 18:22:00 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/15 16:48:04 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ namespace ft {
 			typedef size_t												size_type;
 		public :
 			node*			root;
-			node*			_last;
 			allocator_type	_alloc;
 			key_compare		_key_compare;
 		private :
@@ -92,8 +91,8 @@ namespace ft {
 				return node;
 			}
 		public :
-			tree(void) : root(NULL), _last(NULL), _alloc(allocator_type()), _key_compare(key_compare()) {}
-			tree(key_compare key) : root(NULL), _last(NULL), _alloc(allocator_type()), _key_compare(key) {}
+			tree(void) : root(NULL), _alloc(allocator_type()), _key_compare(key_compare()) {}
+			tree(key_compare key) : root(NULL), _alloc(allocator_type()), _key_compare(key) {}
 			node_ptr find(node_ptr nodes, value_type element) const
 			{
 				node_ptr ret = NULL;
@@ -106,6 +105,28 @@ namespace ft {
 				if (!ret)
 					ret = find(nodes->right, element);
 				return (ret);
+			}
+			void swap(tree &x)
+			{
+				if (this == &x)
+					return ;
+				allocator_type	tmp_alloc = _alloc;
+				key_compare		tmp_key = _key_compare;
+				node*			tmp_root = root;
+
+				_alloc = x._alloc;
+				_key_compare  = x._key_compare;
+				root = x.root;
+
+				x._alloc = tmp_alloc;
+				x._key_compare = tmp_key;
+				x.root = tmp_root;
+			}
+			size_type	max_size() const
+			{
+				if (sizeof(value_type) == 1)
+					return (_alloc.max_size() / 2);
+				return (_alloc.max_size());
 			}
 			bool erase(iterator position)
 			{
@@ -171,7 +192,7 @@ namespace ft {
 				_alloc.destroy(node);
 				root = NULL;
 			}
-			node_ptr setlast() const
+			node_ptr setlast() const 
 			{
 				node_ptr tmp = root;
 				if (tmp != NULL)
@@ -179,17 +200,13 @@ namespace ft {
 						tmp = tmp->right;
 				return (tmp);
 			}
-			node_ptr getlast() const
-			{
-				return (_last);
-			}
 			iterator begin()
 			{
 				node_ptr tmp = root;
 				if (root)
 					while (tmp->left != NULL)
 						tmp = tmp->left;
-				return iterator(tmp, getlast());
+				return iterator(tmp, setlast());
 			}
 			const_iterator begin() const
 			{
@@ -197,7 +214,7 @@ namespace ft {
 				if (root)
 					while (tmp->left != NULL)
 						tmp = tmp->left;
-				return const_iterator(tmp, reinterpret_cast<const_node_ptr>(getlast()));
+				return const_iterator(tmp, reinterpret_cast<const_node_ptr>(setlast()));
 			}
 			iterator end()
 			{

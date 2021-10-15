@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/14 18:29:19 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/15 16:02:14 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ namespace ft {
 		public :
 			explicit map (const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type())
-			: _alloc(alloc), _key_compare(comp), _tree(), _size(0) {}
+			: _alloc(alloc), _key_compare(comp), _tree(tree()), _size(0) {}
 			
 			template <class InputIterator>
 			map (InputIterator first, InputIterator last,
@@ -200,19 +200,19 @@ namespace ft {
 			};
 			void swap (map& x)
 			{
+				if (this == &x)
+					return ;
+				_tree.swap(x._tree);
 				allocator_type	tmp_alloc = _alloc;
 				key_compare		tmp_key = _key_compare;
-				tree			tmp_tree = _tree;
 				size_type		tmp_size = _size;
 
 				_alloc = x._alloc;
 				_key_compare  = x._key_compare;
-				_tree = x._tree;
 				_size = x._size;
 
 				x._alloc = tmp_alloc;
 				x._key_compare = tmp_key;
-				x._tree = tmp_tree;
 				x._size = tmp_size;
 			}
 			value_compare value_comp() const
@@ -277,9 +277,7 @@ namespace ft {
 			}
 			size_type	max_size() const
 			{
-				if (sizeof(value_type) == 1)
-					return (_alloc.max_size() / 2);
-				return (_alloc.max_size());
+				return (_tree.max_size());
 			}
 			size_type	size() const
 			{
