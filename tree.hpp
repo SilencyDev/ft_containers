@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/19 14:35:03 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/19 16:33:17 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,90 @@ namespace ft {
 				}
 				return node;
 			}
+			void	left_rotate(node_ptr x)
+			{
+				node_ptr y = x->right;
+				x->right = y->left;
+				if (y->left != NIL)
+					y->left->parent = x;
+				y->parent = x->parent;
+				if (x->parent == NIL)
+					root = y;
+				else if (x == x->parent->left)
+					x->parent->left = y;
+				else
+					x->parent->right = y;
+				y->left = x;
+				x->parent = y;
+			}
+			void	right_rotate(node_ptr x)
+			{
+				node_ptr y = x->left;
+				x->left = y->right;
+				if (y->right != NIL)
+					y->right->parent = x;
+				y->parent = x->parent;
+				if (x->parent == NIL)
+					root = y;
+				else if (x == x->parent->right)
+					x->parent->right = y;
+				else
+					x->parent->left = y;
+				y->right = x;
+				x->parent = y;
+			}
+			void	insertion_fix(node_ptr z)
+			{
+				node_ptr y;
+				while (z->parent->color == RED)
+				{
+					if (z->parent == z->parent->parent->left)
+					{
+						y = z->parent->parent->right;
+						if (y->color == RED)
+						{
+							z->parent->color = BLACK;
+							y->color = BLACK;
+							z->parent->parent->color = RED;
+							z = z->parent->parent;
+						}
+						else
+						{
+							if (z == z->parent->right)
+							{
+								z = z->parent;
+								left_rotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							right_rotate(z->parent->parent);
+						}
+					}
+					else
+					{
+						y = z->parent->parent->left;
+						if (y->color == RED)
+						{
+							z->parent->color = BLACK;
+							y->color = BLACK;
+							z->parent->parent->color = RED;
+							z = z->parent->parent;
+						}
+						else
+						{
+							if (z == z->parent->left)
+							{
+								z = z->parent;
+								right_rotate(z);
+							}
+							z->parent->color = BLACK;
+							z->parent->parent->color = RED;
+							left_rotate(z->parent->parent);
+						}
+					}
+				}
+				root->color = BLACK;
+			}
 		public :
 			tree(void) : _alloc(allocator_type()), _key_compare(key_compare()) {
 				NIL = _alloc.allocate(1);
@@ -171,47 +255,9 @@ namespace ft {
 						else
 							node->parent->right = NIL;
 					}
-					// if (node == root)
-					// 	root = NIL;
-					// _alloc.deallocate(node, 1);
 				}
-				// else
-				// {
-				// 	node_ptr tmp = btree_successor(node);
-				// 	swap(node, tmp);
-				// 	if (tmp->parent)
-				// 	{
-				// 		if (tmp->parent->left == tmp)
-				// 			tmp->parent->left = NIL;
-				// 		else
-				// 			tmp->parent->right = NIL;
-				// 	}
-				// 	_alloc.deallocate(tmp, 1);
-				// }
 				return true;
 			}
-			// void swap(node_ptr node1, node_ptr node2)
-			// {
-			// 	key tmpk = node1->content.first;
-			// 	value tmpv = node1->content.second;
-			// 	node1->content.first = node2->content.first;
-			// 	node1->content.second = node2->content.second;
-			// 	node2->content.first = tmpk;
-			// 	node2->content.second = tmpv;
-			// }
-			// void swap(const_node_ptr node1, const_node_ptr node2) const
-			// {
-			// 	reinterpret_cast<node_ptr>(node1);
-			// 	reinterpret_cast<node_ptr>(node2);
-			// 	key tmpk = node1->content.first;
-			// 	value tmpv = node1->content.second;
-			// 	node1->content.first = node2->content.first;
-			// 	node1->content.second = node2->content.second;
-			// 	node2->content.first = tmpk;
-			// 	node2->content.second = tmpv;
-			// 	reinterpret_cast<const_node_ptr>(node1);
-			// 	reinterpret_cast<const_node_ptr>(node2);
-			// }
 			void clear(node_ptr node)
 			{
 				if (node == NIL)
@@ -256,10 +302,53 @@ namespace ft {
 			}
 			node_ptr insert(value_type element)
 			{
+				// node_ptr y = NIL; //variable for the parent of the added node
+				// node_ptr temp = root;
+
+				// while(temp != NIL)
+				// {
+				// 	y = temp;
+				// 	if(_key_compare(element.first, temp->content.first))
+				// 		temp = temp->left;
+				// 	else if (_key_compare(temp->content.first, element.first))
+				// 		temp = temp->right;
+				// 	else
+				// 		return root;
+				// }
+
+				// if(y == NIL)
+				// { //newly added node is root
+				// 	root = create_node(element);
+				// 	root->parent = y;
+				// 	return root;
+				// }
+				// else if(_key_compare(element.first, temp->content.first))
+				// {
+				// 	y->left = create_node(element);
+				// 	y->left->parent = y;
+				// 	return (y->left);
+				// } //data of child is less than its parent, left child
+				// else
+				// {
+				// 	y->right = create_node(element);
+				// 	y->right->parent = y;
+				// 	return (y->right);
+				// }
+
+				// z->right = NIL;
+				// z->left = NIL;
+
+				// insertion_fix(z);
+
+
 				node_ptr tmp = root;
 				// btree_display(root, 10);
 				if (root == NIL)
-					return (root = create_node(element));
+				{
+					root = create_node(element);
+					root->color = BLACK;
+					return (root);
+				}
 				while (tmp != NIL)
 				{
 					if (_key_compare(element.first, tmp->content.first))
@@ -267,14 +356,22 @@ namespace ft {
 						if (tmp->left != NIL)
 							tmp = tmp->left;
 						else
-							return (tmp->left = create_node(element, tmp));
+						{
+							tmp->left = create_node(element, tmp);
+							insertion_fix(tmp->left);
+							return (tmp->left);
+						}
 					}
 					else if (_key_compare(tmp->content.first, element.first))
 					{
 						if (tmp->right != NIL)
 							tmp = tmp->right;
 						else
-							return (tmp->right = create_node(element, tmp));
+						{
+							tmp->right = create_node(element, tmp);
+							insertion_fix(tmp->right);
+							return (tmp->right);
+						}
 					}
 					else
 						break;
