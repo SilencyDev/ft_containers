@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/14 12:41:14 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/19 14:08:33 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,18 +71,17 @@ namespace ft {
 
 			bidirectional_iterator &operator++(void)
 			{
-				if (!_current)
+				if (!_current->NIL)
 					return (*this);
-				
-				if (_current->right)
+				if (_current->right->NIL)
 				{
 					_current = _current->right;
-					while (_current->left)
+					while (_current->left->NIL)
 						_current = _current->left;
 				}
 				else
 				{
-					while (_current->parent && _current == _current->parent->right)
+					while (_current->parent->NIL && _current == _current->parent->right)
 						_current = _current->parent;
 					_current = _current->parent;
 				}
@@ -97,20 +96,20 @@ namespace ft {
 			}
 			bidirectional_iterator &operator--(void)
 			{
-				if (!_current)
+				if (!_current->NIL)
 				{
 					_current = _last;
 					return *this;
 				}
-				if (_current->left)
+				if (_current->left->NIL)
 				{
 					_current = _current->left;
-					while (_current->right)
+					while (_current->right->NIL)
 						_current = _current->right;
 				}
 				else
 				{
-					while (_current->parent && _current == _current->parent->left)
+					while (_current->parent->NIL && _current == _current->parent->left)
 						_current = _current->parent;
 					_current = _current->parent;
 				}
@@ -209,17 +208,17 @@ namespace ft {
 			node_ptr	_last;
 			const_bidirectional_iterator &operator++(void)
 			{
-				if (!_current)
+				if (!_current->NIL)
 					return *this;
-				if (_current->right)
+				if (_current->right->NIL)
 				{
 					_current = _current->right;
-					while (_current->left)
+					while (_current->left->NIL)
 						_current = _current->left;
 				}
 				else
 				{
-					while (_current->parent && _current == _current->parent->right)
+					while (_current->parent->NIL && _current == _current->parent->right)
 						_current = _current->parent;
 					_current = _current->parent;
 				}
@@ -234,21 +233,21 @@ namespace ft {
 			}
 			const_bidirectional_iterator &operator--(void)
 			{
-				if (!_current)
+				if (!_current->NIL)
 				{
 					_current = _last;
 					return *this;
 				}
 				
-				if (_current->left)
+				if (_current->left->NIL)
 				{
 					_current = _current->left;
-					while (_current->right)
+					while (_current->right->NIL)
 						_current = _current->right;
 				}
 				else
 				{
-					while (_current->parent && _current == _current->parent->left)
+					while (_current->parent->NIL && _current == _current->parent->left)
 						_current = _current->parent;
 					_current = _current->parent;
 				}

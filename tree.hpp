@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/15 16:48:04 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/19 14:35:03 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ namespace ft {
 			typedef size_t												size_type;
 		public :
 			node*			root;
+			node*			NIL;
 			allocator_type	_alloc;
 			key_compare		_key_compare;
 		private :
@@ -52,14 +53,20 @@ namespace ft {
 				node *node;
 				node = _alloc.allocate(1);
 				_alloc.construct(node, element);
-				node->parent = parent;
+				if (parent == NULL)
+					node->parent = NIL;
+				else
+					node->parent = parent;
+				node->left = NIL;
+				node->right = NIL;
+				node->NIL = NIL;
 				return (node);
 			}
 			void	btree_display(node *root, int space)
 			{
 				int	i = 5;
 
-				if (root == NULL)
+				if (root == NIL)
 					return ;
 				space += 5;
 				btree_display(root->right, space);
@@ -70,39 +77,58 @@ namespace ft {
 			}
 			node_ptr btree_successor(node_ptr node)
 			{
-				if (node->right)
+				if (node->right != NIL)
 				{
 					node = node->right;
-					while (node->left)
+					while (node->left != NIL)
 						node = node->left;
-					if (node->right)
+					if (node->right != NIL)
 						btree_successor(node->right);
 					return node;
 				}
-				else if (node->left)
+				else if (node->left != NIL)
 				{
 					node = node->left;
-					while (node->right)
+					while (node->right != NIL)
 						node = node->right;
-					if (node->left)
+					if (node->left != NIL)
 						btree_successor(node->left);
 					return node;
 				}
 				return node;
 			}
 		public :
-			tree(void) : root(NULL), _alloc(allocator_type()), _key_compare(key_compare()) {}
-			tree(key_compare key) : root(NULL), _alloc(allocator_type()), _key_compare(key) {}
+			tree(void) : _alloc(allocator_type()), _key_compare(key_compare()) {
+				NIL = _alloc.allocate(1);
+				_alloc.construct(NIL, value_type());
+				NIL->parent = NULL;
+				NIL->NIL = NULL;
+				NIL->left = NULL;
+				NIL->right = NULL;
+				NIL->color = BLACK;
+
+				root = NIL;
+			}
+			tree(key_compare key) : _alloc(allocator_type()), _key_compare(key) {
+				NIL = _alloc.allocate(1);
+				_alloc.construct(NIL, value_type());
+				NIL->parent = NULL;
+				NIL->NIL = NULL;
+				NIL->left = NULL;
+				NIL->right = NULL;
+				NIL->color = BLACK;
+				root = NIL;
+			}
 			node_ptr find(node_ptr nodes, value_type element) const
 			{
-				node_ptr ret = NULL;
-				if (!nodes)
-					return (NULL);
+				node_ptr ret;
+ 				if (nodes == NIL)
+					return (NIL);
 				ret = find(nodes->left, element);
-				if (!ret && !_key_compare(nodes->content.first, element.first)
+				if (ret == NIL && !_key_compare(nodes->content.first, element.first)
 					&& !_key_compare(element.first, nodes->content.first))
 					return (nodes);
-				if (!ret)
+				if (ret == NIL)
 					ret = find(nodes->right, element);
 				return (ret);
 			}
@@ -113,11 +139,14 @@ namespace ft {
 				allocator_type	tmp_alloc = _alloc;
 				key_compare		tmp_key = _key_compare;
 				node*			tmp_root = root;
+				node*			tmp_nil = NIL;
 
+				NIL = x.NIL;
 				_alloc = x._alloc;
 				_key_compare  = x._key_compare;
 				root = x.root;
 
+				x.NIL = tmp_nil;
 				x._alloc = tmp_alloc;
 				x._key_compare = tmp_key;
 				x.root = tmp_root;
@@ -131,19 +160,19 @@ namespace ft {
 			bool erase(iterator position)
 			{
 				node_ptr node = position.base_node();
-				if (node == NULL)
+				if (node == NIL)
 					return false;
-				if (!node->left && !node->right)
+				if (node->left == NIL && node->right == NIL)
 				{
-					if (node->parent)
+					if (node->parent == NIL)
 					{
 						if (node->parent->left == node)
-							node->parent->left = NULL;
+							node->parent->left = NIL;
 						else
-							node->parent->right = NULL;
+							node->parent->right = NIL;
 					}
 					// if (node == root)
-					// 	root = NULL;
+					// 	root = NIL;
 					// _alloc.deallocate(node, 1);
 				}
 				// else
@@ -153,9 +182,9 @@ namespace ft {
 				// 	if (tmp->parent)
 				// 	{
 				// 		if (tmp->parent->left == tmp)
-				// 			tmp->parent->left = NULL;
+				// 			tmp->parent->left = NIL;
 				// 		else
-				// 			tmp->parent->right = NULL;
+				// 			tmp->parent->right = NIL;
 				// 	}
 				// 	_alloc.deallocate(tmp, 1);
 				// }
@@ -185,63 +214,64 @@ namespace ft {
 			// }
 			void clear(node_ptr node)
 			{
-				if (!node)
+				if (node == NIL)
 					return ;
 				clear(node->left);
 				clear(node->right);
 				_alloc.destroy(node);
-				root = NULL;
+				root = NIL;
 			}
 			node_ptr setlast() const 
 			{
 				node_ptr tmp = root;
-				if (tmp != NULL)
-					while (tmp->right)
+				if (tmp != tmp->NIL)
+					while (tmp->right != tmp->NIL)
 						tmp = tmp->right;
 				return (tmp);
 			}
 			iterator begin()
 			{
 				node_ptr tmp = root;
-				if (root)
-					while (tmp->left != NULL)
+				if (root != NIL)
+					while (tmp->left != NIL)
 						tmp = tmp->left;
 				return iterator(tmp, setlast());
 			}
 			const_iterator begin() const
 			{
 				const_node_ptr tmp = reinterpret_cast<const_node_ptr>(root);
-				if (root)
-					while (tmp->left != NULL)
-						tmp = tmp->left;
+				if (tmp == reinterpret_cast<const_node_ptr>(NIL))
+					return const_iterator(tmp, reinterpret_cast<const_node_ptr>(setlast()));
+				while (tmp->left != reinterpret_cast<const_node_ptr>(tmp->NIL))
+					tmp = tmp->left;
 				return const_iterator(tmp, reinterpret_cast<const_node_ptr>(setlast()));
 			}
 			iterator end()
 			{
-				return iterator(NULL, setlast());
+				return iterator(NIL, setlast());
 			}
 			const_iterator end() const
 			{
-				return const_iterator(NULL, reinterpret_cast<const_node_ptr>(setlast()));
+				return const_iterator(reinterpret_cast<const_node_ptr>(NIL), reinterpret_cast<const_node_ptr>(setlast()));
 			}
 			node_ptr insert(value_type element)
 			{
 				node_ptr tmp = root;
 				// btree_display(root, 10);
-				if (!root)
+				if (root == NIL)
 					return (root = create_node(element));
-				while (tmp)
+				while (tmp != NIL)
 				{
 					if (_key_compare(element.first, tmp->content.first))
 					{
-						if (tmp->left)
+						if (tmp->left != NIL)
 							tmp = tmp->left;
 						else
 							return (tmp->left = create_node(element, tmp));
 					}
 					else if (_key_compare(tmp->content.first, element.first))
 					{
-						if (tmp->right)
+						if (tmp->right != NIL)
 							tmp = tmp->right;
 						else
 							return (tmp->right = create_node(element, tmp));

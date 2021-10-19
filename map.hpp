@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/15 16:02:14 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/19 14:29:38 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,11 @@ namespace ft {
 			}
 			pair<iterator,bool> insert (const value_type& val)
 			{
-				bool exist = _tree.find(_tree.root, val) == NULL ? true : false;
+				bool exist = _tree.find(_tree.root, val) == _tree.NIL ? true : false;
 				_tree.insert(val);
 				if (exist)
 					_size++;
-				return(ft::make_pair(iterator(_tree.find(_tree.root, val)), exist));
+				return(ft::make_pair(iterator(_tree.find(_tree.root, val), _tree.NIL), exist));
 			}
 			iterator insert (iterator position, const value_type& val)
 			{
@@ -131,7 +131,7 @@ namespace ft {
 			size_type erase (const key_type& k)
 			{
 				size_type exist;
-				exist = _tree.find(_tree.root, ft::make_pair(k, mapped_type())) != NULL ? 1 : 0;
+				exist = _tree.find(_tree.root, ft::make_pair(k, mapped_type())) != _tree.NIL ? true : false;
 				_tree.erase(_tree.find(_tree.root, ft::make_pair(k, mapped_type())));
 				return (exist);
 			}
@@ -142,7 +142,7 @@ namespace ft {
 			}
 			size_type count (const key_type& k) const
 			{
-				if (_tree.find(_tree.root, ft::make_pair(k, mapped_type())))
+				if (_tree.find(_tree.root, ft::make_pair(k, mapped_type())) != _tree.NIL)
 					return (1);
 				return (0);
 			}
