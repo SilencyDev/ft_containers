@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 13:37:15 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 14:49:53 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,7 +274,7 @@ namespace ft {
 					o_color = y->color;
 					x = y->right;
 					if ( y->parent == z)
-						x->parent = z;
+						x->parent = y;
 					else
 					{
 						transplant(y, y->right);
@@ -286,8 +286,8 @@ namespace ft {
 					y->left->parent = y;
 					y->color = z->color;
 				}
-				// if (o_color == BLACK)
-				// 	delete_fix(x);
+				if (o_color == BLACK)
+					delete_fix(x);
 			}
 		public :
 			tree(void) : _alloc(allocator_type()), _key_compare(key_compare()) {

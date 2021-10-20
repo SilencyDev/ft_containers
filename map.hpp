@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 12:34:38 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 14:55:19 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,14 +147,16 @@ namespace ft {
 			void erase (iterator first, iterator last)
 			{
 				size_type exist;
-				for (; first != last; first++)
+				while (first != last)
 				{
-					exist = _tree.find(_tree.root, *first) != _tree.NIL ? true : false;
+					exist = _tree.find(_tree.root, *(first.base())) != _tree.NIL ? true : false;
 					if (exist)
 					{
-						_tree.erase(first);
+						_tree.erase(first++);
 						_size--;
 					}
+					else
+						first++;
 				}
 			}
 			size_type count (const key_type& k) const
