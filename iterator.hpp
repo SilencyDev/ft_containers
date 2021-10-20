@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:19:19 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/19 14:08:33 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 11:48:10 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,19 @@ namespace ft {
 			bidirectional_iterator(node_ptr ptr, node_ptr last = NULL) : _current(ptr), _last(last) {}
 			template <class Ts>
 			bidirectional_iterator (const ft::bidirectional_iterator<Ts>& it) : _current(it.base_node()), _last(it._last) {}
-			// template <class Ts>
-			// bidirectional_iterator (const ft::const_bidirectional_iterator<Ts>& it) : _current(it.base()), _last(it.getlast()) {}
 			~bidirectional_iterator(void) {}
 			node_ptr	_current;
 			node_ptr	_last;
 
 			bidirectional_iterator &operator++(void)
 			{
+				// std::cout << "HERE ++ : " << std::endl;
+
+				if (_current == _last)
+				{
+					_current = _current->NIL;
+					return *this;
+				}
 				if (!_current->NIL)
 					return (*this);
 				if (_current->right->NIL)
@@ -96,6 +101,7 @@ namespace ft {
 			}
 			bidirectional_iterator &operator--(void)
 			{
+				// std::cout << "HERE-- :" << std::endl;
 				if (!_current->NIL)
 				{
 					_current = _last;
@@ -208,6 +214,12 @@ namespace ft {
 			node_ptr	_last;
 			const_bidirectional_iterator &operator++(void)
 			{
+				// std::cout << "HERE++ const : " << _current << std::endl;
+				if (_current == _last)
+				{
+					_current = _current->NIL;
+					return *this;
+				}
 				if (!_current->NIL)
 					return *this;
 				if (_current->right->NIL)
@@ -233,6 +245,7 @@ namespace ft {
 			}
 			const_bidirectional_iterator &operator--(void)
 			{
+				// std::cout << "HERE-- const : " << _current << std::endl;
 				if (!_current->NIL)
 				{
 					_current = _last;

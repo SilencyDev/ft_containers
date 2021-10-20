@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/19 16:33:17 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 13:37:15 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,19 +61,6 @@ namespace ft {
 				node->right = NIL;
 				node->NIL = NIL;
 				return (node);
-			}
-			void	btree_display(node *root, int space)
-			{
-				int	i = 5;
-
-				if (root == NIL)
-					return ;
-				space += 5;
-				btree_display(root->right, space);
-				while (i++ < space)
-					std::cerr << " ";
-				std::cerr << root->content.first << " - " <<  root->content.second << std::endl;
-				btree_display(root->left, space);
 			}
 			node_ptr btree_successor(node_ptr node)
 			{
@@ -181,6 +168,127 @@ namespace ft {
 				}
 				root->color = BLACK;
 			}
+			void	transplant(node_ptr u, node_ptr v)
+			{
+				if (u->parent == NIL)
+					root = v;
+				else if (u == u->parent->left)
+					u->parent->left = v;
+				else
+					u->parent->right = v;
+				v->parent = u->parent;
+			}
+			node_ptr	minimum(node_ptr x)
+			{
+				while (x->left != NIL)
+					x = x->left;
+				return x;
+			}
+			void	delete_fix(node_ptr x)
+			{
+				while (x != root && x->color == BLACK)
+				{
+					if (x == x->parent->left)
+					{
+						node_ptr w = x->parent->right;
+						if (w->color == RED)
+						{
+							w->color = BLACK;
+							x->parent->color = RED;
+							left_rotate(x->parent);
+							w = x->parent->right;
+						}
+						if (w->left->color == BLACK && w->right->color == BLACK)
+						{
+							w->color = RED;
+							x = x->parent;
+						}
+						else
+						{
+							if (w->right->color == BLACK)
+							{
+								w->left->color = BLACK;
+								w->color = RED;
+								right_rotate(w);
+								w = x->parent->right;
+							}
+							w->color = x->parent->color;
+							x->parent->color = BLACK;
+							w->right->color = BLACK;
+							left_rotate(x->parent);
+							x = root;
+						}
+					}
+					else
+					{
+						node_ptr w = x->parent->left;
+						if (w->color == RED)
+						{
+							w->color = BLACK;
+							x->parent->color = RED;
+							right_rotate(x->parent);
+							w = x->parent->left;
+						}
+						if (w->right->color == BLACK && w->left->color == BLACK)
+						{
+							w->color = RED;
+							x = x->parent;
+						}
+						else
+						{
+							if (w->left->color == BLACK)
+							{
+								w->right->color = BLACK;
+								w->color = RED;
+								left_rotate(w);
+								w = x->parent->left;
+							}
+							w->color = x->parent->color;
+							x->parent->color = BLACK;
+							w->left->color = BLACK;
+							right_rotate(x->parent);
+							x = root;
+						}
+					}
+				}
+				x->color = BLACK;
+			}
+			void	delete_node(node_ptr z)
+			{
+				node_ptr y = z;
+				node_ptr x;
+				color o_color = y->color;
+				if (z->left == NIL)
+				{
+					x = z->right;
+					transplant(z, z->right);
+				}
+				else if (z->right == NIL)
+				{
+					x = z->left;
+					transplant(z, z->left);
+				}
+				else
+				{
+					y = minimum(z->right);
+					o_color = y->color;
+					x = y->right;
+					if ( y->parent == z)
+						x->parent = z;
+					else
+					{
+						transplant(y, y->right);
+						y->right = z->right;
+						y->right->parent = y;
+					}
+					transplant(z, y);
+					y->left = z->left;
+					y->left->parent = y;
+					y->color = z->color;
+				}
+				// if (o_color == BLACK)
+				// 	delete_fix(x);
+			}
 		public :
 			tree(void) : _alloc(allocator_type()), _key_compare(key_compare()) {
 				NIL = _alloc.allocate(1);
@@ -190,7 +298,6 @@ namespace ft {
 				NIL->left = NULL;
 				NIL->right = NULL;
 				NIL->color = BLACK;
-
 				root = NIL;
 			}
 			tree(key_compare key) : _alloc(allocator_type()), _key_compare(key) {
@@ -202,6 +309,19 @@ namespace ft {
 				NIL->right = NULL;
 				NIL->color = BLACK;
 				root = NIL;
+			}
+			void	btree_display(node *root, int space)
+			{
+				int	i = 5;
+
+				if (root == NIL)
+					return ;
+				space += 5;
+				btree_display(root->right, space);
+				while (i++ < space)
+					std::cerr << " ";
+				std::cerr << root->content.first << " - " <<  root->content.second << std::endl;
+				btree_display(root->left, space);
 			}
 			node_ptr find(node_ptr nodes, value_type element) const
 			{
@@ -237,26 +357,11 @@ namespace ft {
 			}
 			size_type	max_size() const
 			{
-				if (sizeof(value_type) == 1)
-					return (_alloc.max_size() / 2);
-				return (_alloc.max_size());
+				return (std::numeric_limits<size_type>::max() / (sizeof(node) - sizeof(node_ptr)));
 			}
-			bool erase(iterator position)
+			void erase(iterator position)
 			{
-				node_ptr node = position.base_node();
-				if (node == NIL)
-					return false;
-				if (node->left == NIL && node->right == NIL)
-				{
-					if (node->parent == NIL)
-					{
-						if (node->parent->left == node)
-							node->parent->left = NIL;
-						else
-							node->parent->right = NIL;
-					}
-				}
-				return true;
+				delete_node(position.base_node());
 			}
 			void clear(node_ptr node)
 			{
@@ -302,45 +407,6 @@ namespace ft {
 			}
 			node_ptr insert(value_type element)
 			{
-				// node_ptr y = NIL; //variable for the parent of the added node
-				// node_ptr temp = root;
-
-				// while(temp != NIL)
-				// {
-				// 	y = temp;
-				// 	if(_key_compare(element.first, temp->content.first))
-				// 		temp = temp->left;
-				// 	else if (_key_compare(temp->content.first, element.first))
-				// 		temp = temp->right;
-				// 	else
-				// 		return root;
-				// }
-
-				// if(y == NIL)
-				// { //newly added node is root
-				// 	root = create_node(element);
-				// 	root->parent = y;
-				// 	return root;
-				// }
-				// else if(_key_compare(element.first, temp->content.first))
-				// {
-				// 	y->left = create_node(element);
-				// 	y->left->parent = y;
-				// 	return (y->left);
-				// } //data of child is less than its parent, left child
-				// else
-				// {
-				// 	y->right = create_node(element);
-				// 	y->right->parent = y;
-				// 	return (y->right);
-				// }
-
-				// z->right = NIL;
-				// z->left = NIL;
-
-				// insertion_fix(z);
-
-
 				node_ptr tmp = root;
 				// btree_display(root, 10);
 				if (root == NIL)

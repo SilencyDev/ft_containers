@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/19 14:29:38 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 12:34:38 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,20 +125,37 @@ namespace ft {
 			}
 			void erase (iterator position)
 			{
-				if (_tree.erase(position))
+				size_type exist;
+				exist = _tree.find(_tree.root, *position) != _tree.NIL ? true : false;
+				if (exist)
+				{
+					_tree.erase(position);
 					_size--;
+				}
 			}
 			size_type erase (const key_type& k)
 			{
 				size_type exist;
 				exist = _tree.find(_tree.root, ft::make_pair(k, mapped_type())) != _tree.NIL ? true : false;
-				_tree.erase(_tree.find(_tree.root, ft::make_pair(k, mapped_type())));
+				if (exist)
+				{
+					_tree.erase(_tree.find(_tree.root, ft::make_pair(k, mapped_type())));
+					_size--;
+				}
 				return (exist);
 			}
 			void erase (iterator first, iterator last)
 			{
+				size_type exist;
 				for (; first != last; first++)
-					_tree.erase(first);
+				{
+					exist = _tree.find(_tree.root, *first) != _tree.NIL ? true : false;
+					if (exist)
+					{
+						_tree.erase(first);
+						_size--;
+					}
+				}
 			}
 			size_type count (const key_type& k) const
 			{
@@ -289,6 +306,10 @@ namespace ft {
 					return (false);
 				return (true);
 			}
+
+			void	print_tree(void) {
+				_tree.btree_display(_tree.root, 0);
+			}
 	};
 	template <class Key, class T, class Compare, class Alloc>
 	void swap(ft::map<Key,T,Compare,Alloc>& x, ft::map<Key,T,Compare,Alloc>& y)
@@ -338,5 +359,6 @@ namespace ft {
 	{
 		return (!(lhs < rhs));
 	}
+
 }
 #endif

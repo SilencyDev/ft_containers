@@ -6,18 +6,18 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:46:02 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/19 11:01:49 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 12:37:15 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NODE_HPP
 # define NODE_HPP
 
-enum  e_color
+typedef enum  e_color
 {
 	BLACK,
 	RED
-};
+} color;
 
 template < class T >
 class node
