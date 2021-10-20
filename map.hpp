@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 14:55:19 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:56:40 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ namespace ft {
 			{
 				_alloc = alloc;
 				_key_compare = comp;
-				_size = 0;
 				_tree = tree();
 				while (first != last)
 					insert(*first++);
@@ -82,7 +81,6 @@ namespace ft {
 					clear();
 					insert(x.begin(), x.end());
 					_key_compare = x._key_compare;
-					_size = x._size;
 				}
 				return (*this);
 			}
@@ -107,8 +105,6 @@ namespace ft {
 			{
 				bool exist = _tree.find(_tree.root, val) == _tree.NIL ? true : false;
 				_tree.insert(val);
-				if (exist)
-					_size++;
 				return(ft::make_pair(iterator(_tree.find(_tree.root, val), _tree.NIL), exist));
 			}
 			iterator insert (iterator position, const value_type& val)
@@ -128,20 +124,15 @@ namespace ft {
 				size_type exist;
 				exist = _tree.find(_tree.root, *position) != _tree.NIL ? true : false;
 				if (exist)
-				{
 					_tree.erase(position);
-					_size--;
-				}
 			}
 			size_type erase (const key_type& k)
 			{
 				size_type exist;
-				exist = _tree.find(_tree.root, ft::make_pair(k, mapped_type())) != _tree.NIL ? true : false;
+				node<value_type>* it = _tree.find(_tree.root, ft::make_pair(k, mapped_type()));
+				exist = it != _tree.NIL ? true : false;
 				if (exist)
-				{
-					_tree.erase(_tree.find(_tree.root, ft::make_pair(k, mapped_type())));
-					_size--;
-				}
+					_tree.erase_ptr(it);
 				return (exist);
 			}
 			void erase (iterator first, iterator last)
@@ -151,12 +142,7 @@ namespace ft {
 				{
 					exist = _tree.find(_tree.root, *(first.base())) != _tree.NIL ? true : false;
 					if (exist)
-					{
 						_tree.erase(first++);
-						_size--;
-					}
-					else
-						first++;
 				}
 			}
 			size_type count (const key_type& k) const
@@ -168,7 +154,7 @@ namespace ft {
 			void clear()
 			{
 				_tree.clear(_tree.root);
-				_size = 0;
+				_tree._size = 0;
 			}
 			iterator begin()
 			{
@@ -300,7 +286,7 @@ namespace ft {
 			}
 			size_type	size() const
 			{
-				return _size;
+				return _tree._size;
 			}
 			bool empty() const
 			{

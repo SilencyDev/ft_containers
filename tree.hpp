@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 14:49:53 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 16:02:47 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ namespace ft {
 			typedef ptrdiff_t											difference_type;
 			typedef size_t												size_type;
 		public :
+			size_type		_size;
 			node*			root;
 			node*			NIL;
 			allocator_type	_alloc;
@@ -60,6 +61,7 @@ namespace ft {
 				node->left = NIL;
 				node->right = NIL;
 				node->NIL = NIL;
+				_size++;
 				return (node);
 			}
 			node_ptr btree_successor(node_ptr node)
@@ -298,6 +300,7 @@ namespace ft {
 				NIL->left = NULL;
 				NIL->right = NULL;
 				NIL->color = BLACK;
+				_size = 0;
 				root = NIL;
 			}
 			tree(key_compare key) : _alloc(allocator_type()), _key_compare(key) {
@@ -308,6 +311,7 @@ namespace ft {
 				NIL->left = NULL;
 				NIL->right = NULL;
 				NIL->color = BLACK;
+				_size = 0;
 				root = NIL;
 			}
 			void	btree_display(node *root, int space)
@@ -325,16 +329,17 @@ namespace ft {
 			}
 			node_ptr find(node_ptr nodes, value_type element) const
 			{
-				node_ptr ret;
- 				if (nodes == NIL)
-					return (NIL);
-				ret = find(nodes->left, element);
-				if (ret == NIL && !_key_compare(nodes->content.first, element.first)
-					&& !_key_compare(element.first, nodes->content.first))
-					return (nodes);
-				if (ret == NIL)
-					ret = find(nodes->right, element);
-				return (ret);
+				while (nodes != NIL)
+				{
+					if (!_key_compare(nodes->content.first, element.first)
+				 	&& !_key_compare(element.first, nodes->content.first))
+					 return (nodes);
+					if (_key_compare(element.first, nodes->content.first))
+						nodes = nodes->left;
+					else if (_key_compare(nodes->content.first, element.first))
+						nodes = nodes->right;
+				}
+				return NIL;
 			}
 			void swap(tree &x)
 			{
@@ -344,16 +349,19 @@ namespace ft {
 				key_compare		tmp_key = _key_compare;
 				node*			tmp_root = root;
 				node*			tmp_nil = NIL;
+				size_type		tmp_size = _size;
 
 				NIL = x.NIL;
 				_alloc = x._alloc;
 				_key_compare  = x._key_compare;
 				root = x.root;
+				_size = x._size;
 
 				x.NIL = tmp_nil;
 				x._alloc = tmp_alloc;
 				x._key_compare = tmp_key;
 				x.root = tmp_root;
+				x._size = tmp_size;
 			}
 			size_type	max_size() const
 			{
@@ -362,6 +370,12 @@ namespace ft {
 			void erase(iterator position)
 			{
 				delete_node(position.base_node());
+				_size--;
+			}
+			void erase_ptr(node_ptr node)
+			{
+				delete_node(node);
+				_size--;
 			}
 			void clear(node_ptr node)
 			{
