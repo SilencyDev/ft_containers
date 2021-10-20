@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 16:02:47 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 18:53:20 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,6 +288,8 @@ namespace ft {
 					y->left->parent = y;
 					y->color = z->color;
 				}
+				_alloc.destroy(z);
+				_alloc.deallocate(z, 1);
 				if (o_color == BLACK)
 					delete_fix(x);
 			}
@@ -313,6 +315,12 @@ namespace ft {
 				NIL->color = BLACK;
 				_size = 0;
 				root = NIL;
+			}
+			~tree()
+			{
+				clear(root);
+				// _alloc.destroy(NIL);
+				// _alloc.deallocate(NIL, 1);
 			}
 			void	btree_display(node *root, int space)
 			{
@@ -384,7 +392,9 @@ namespace ft {
 				clear(node->left);
 				clear(node->right);
 				_alloc.destroy(node);
+				_alloc.deallocate(node, 1);
 				root = NIL;
+				_size = 0;
 			}
 			node_ptr setlast() const 
 			{

@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 14:20:35 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 18:01:59 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,11 @@ int	main(void)
 	it = map.begin();
 	end = map.end();
 	while (it != end)
-	{
-			map.erase(it++);
-	}
+		map.erase(it++);
 
 	map.print_tree();
 	std::cout << "FINITO" << std::endl;
+	while (1);
 	// ft::vector<int> lst = ft::vector<int>(10, 5);
 	// ft::vector<int> lst2(lst);
 	// ft::vector<int> lsthigh = ft::vector<int>(20, 5);

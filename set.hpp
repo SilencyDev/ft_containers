@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 16:51:44 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 17:58:55 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 19:26:35 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ namespace ft {
 		public :
 			explicit set (const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type())
-			: _alloc(alloc), _key_compare(comp), _tree(tree()), _size(0) {}
+			: _alloc(alloc), _key_compare(comp), _tree(), _size(0) {}
 			
 			template <class InputIterator>
 			set (InputIterator first, InputIterator last,
@@ -63,7 +63,6 @@ namespace ft {
 			{
 				_alloc = alloc;
 				_key_compare = comp;
-				_tree = tree();
 				while (first != last)
 					insert(*first++);
 			}
@@ -83,7 +82,11 @@ namespace ft {
 				}
 				return (*this);
 			}
-			~set() {}
+			~set()
+			{
+				_tree._alloc.destroy(_tree.NIL);
+				_tree._alloc.deallocate(_tree.NIL, 1);
+			}
 			iterator find (const value_type& k)
 			{
 				if (_tree.find(_tree.root, k) != NULL)
@@ -149,7 +152,6 @@ namespace ft {
 			void clear()
 			{
 				_tree.clear(_tree.root);
-				_tree._size = 0;
 			}
 			iterator begin()
 			{

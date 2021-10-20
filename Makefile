@@ -6,14 +6,14 @@
 #    By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/03 13:10:40 by kmacquet          #+#    #+#              #
-#    Updated: 2021/09/21 16:42:48 by kmacquet         ###   ########.fr        #
+#    Updated: 2021/10/20 18:02:36 by kmacquet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = Containers
 NAME2 = std
 CXX = clang++
-CXXFLAGS = -Wall -Wextra -Werror -fsanitize=address -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror  -std=c++98
 SRCS = main.cpp
 SRCS2 = main2.cpp
 OBJS = $(SRCS:.cpp=.o)

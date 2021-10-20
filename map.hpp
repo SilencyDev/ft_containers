@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 15:56:40 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/20 19:20:05 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ namespace ft {
 		public :
 			explicit map (const key_compare& comp = key_compare(),
 			const allocator_type& alloc = allocator_type())
-			: _alloc(alloc), _key_compare(comp), _tree(tree()), _size(0) {}
+			: _alloc(alloc), _key_compare(comp), _tree(), _size(0) {}
 			
 			template <class InputIterator>
 			map (InputIterator first, InputIterator last,
@@ -64,7 +64,6 @@ namespace ft {
 			{
 				_alloc = alloc;
 				_key_compare = comp;
-				_tree = tree();
 				while (first != last)
 					insert(*first++);
 			}
@@ -88,7 +87,11 @@ namespace ft {
 			{
 				return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
 			}
-			~map() {}
+			~map()
+			{
+				_tree._alloc.destroy(_tree.NIL);
+				_tree._alloc.deallocate(_tree.NIL, 1);
+			}
 			iterator find (const key_type& k)
 			{
 				if (_tree.find(_tree.root, ft::make_pair(k, mapped_type())) != NULL)
@@ -117,7 +120,7 @@ namespace ft {
 			void insert (InputIterator first, InputIterator last)
 			{
 				while (first != last)
-					insert(*first++);
+					insert(*first++);				
 			}
 			void erase (iterator position)
 			{
@@ -154,7 +157,6 @@ namespace ft {
 			void clear()
 			{
 				_tree.clear(_tree.root);
-				_tree._size = 0;
 			}
 			iterator begin()
 			{
