@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:09:39 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/09/30 11:49:37 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/21 15:30:12 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 #include <string>
 #include <deque>
 #include <vector>
+#include <map>
+#include <set>
+#include <stack>
 #include "vector.hpp"
 #include "stack.hpp"
 #include "pair.hpp"
 #include "map.hpp"
+#include "set.hpp"
 #include "iterator.hpp"
 
 #include <stdlib.h>
@@ -57,12 +61,12 @@ int	main(void)
 	std::cout << "lst	  <  lsthigh (1): " << (lst < lsthigh) << std::endl;
 	std::cout << "lst	  <  lst2 (0)	: " << (lst < lst2) << std::endl;
 	std::cout << "===================== Standard fill lst" << std::endl;
-	std::cout << &(*it) << std::endl;
+	std::cout << (*it) << std::endl;
 	for (; it != end; it++)
 		std::cout << *it << std::endl;
 	std::cout << "capacity : " << lst.capacity() << std::endl;
 	std::cout << "===================== Standard copy lst2" << std::endl;
-	std::cout << &(*it2) << std::endl;
+	std::cout << (*it2) << std::endl;
 	for (; it2 != end2; it2++)
 		std::cout << *it2 << std::endl;
 	std::cout << lst2.capacity() << std::endl;
@@ -70,7 +74,7 @@ int	main(void)
 	std::vector<int> lst3(lst.begin(), lst.end());
 	it3 = lst3.begin();
 	end3 = lst3.end();
-	std::cout << &(*it3) << std::endl;
+	std::cout << (*it3) << std::endl;
 	for (; it3 != end3; it3++)
 		std::cout << *it3 << std::endl;
 	std::cout << lst3.capacity() << std::endl;
@@ -239,5 +243,53 @@ int	main(void)
 	lst.clear();
 	std::cout << "capacity : " << lst.capacity() << std::endl;
 	std::cout << lst.size() << std::endl;
+	std::cout << "===================== stack " << std::endl;
+	std::stack<int, std::vector<int> > stk;
+	for (int i = 0; i < 10; i++)
+		stk.push(i);
+	while (stk.top())
+	{
+		std::cout << stk.top() << std::endl;
+		stk.pop();
+	}
+	std::cout << "===================== map " << std::endl;
+	std::map<int, int> map;
+
+	for (int i = 0; i < 19; i++)
+		map.insert(std::make_pair(i, 10));
+
+	map.insert(std::make_pair(7, 10));
+
+	map.erase(18);
+	map.erase(0);
+
+	std::map<int, int>::iterator it_m = map.begin();
+	std::map<int, int>::iterator end_m = map.end();
+	for (; it_m != end_m; it_m++)
+		std::cout << it_m->first << std::endl;
+	it_m = map.begin();
+	end_m = map.end();
+	while (it_m != end_m)
+		map.erase(it_m++);
+
+	std::cout << "===================== set " << std::endl;
+	std::set<int> set;
+
+	for (int i = 0; i < 19; i++)
+		set.insert(i);
+	set.insert(7);
+
+	set.erase(18);
+	set.erase(0);
+
+	std::set<int, int>::iterator it_s = set.begin();
+	std::set<int, int>::iterator end_s = set.end();
+	for (; it_s != end_s; it_s++)
+		std::cout << *it_s << std::endl;
+	it_s = set.begin();
+	end_s = set.end();
+	while (it_s != end_s)
+		set.erase(it_s++);
+	std::cout << "FINITO" << std::endl;
 	return (0);
 }

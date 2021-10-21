@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 15:51:46 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 18:53:20 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/21 14:24:41 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,14 +126,14 @@ namespace ft {
 					if (z->parent == z->parent->parent->left)
 					{
 						y = z->parent->parent->right;
-						if (y->color == RED)
+						if (y->color == RED) // recoloration
 						{
 							z->parent->color = BLACK;
 							y->color = BLACK;
 							z->parent->parent->color = RED;
 							z = z->parent->parent;
 						}
-						else
+						else // need to move the nodes
 						{
 							if (z == z->parent->right)
 							{
@@ -145,7 +145,7 @@ namespace ft {
 							right_rotate(z->parent->parent);
 						}
 					}
-					else
+					else // mirror
 					{
 						y = z->parent->parent->left;
 						if (y->color == RED)
@@ -193,27 +193,28 @@ namespace ft {
 					if (x == x->parent->left)
 					{
 						node_ptr w = x->parent->right;
-						if (w->color == RED)
+						if (w->color == RED) // case 1 : w is red
 						{
 							w->color = BLACK;
 							x->parent->color = RED;
 							left_rotate(x->parent);
 							w = x->parent->right;
 						}
-						if (w->left->color == BLACK && w->right->color == BLACK)
+						if (w->left->color == BLACK && w->right->color == BLACK) // case 2 : childrens are black
 						{
 							w->color = RED;
 							x = x->parent;
 						}
 						else
 						{
-							if (w->right->color == BLACK)
+							if (w->right->color == BLACK) // case 3 : w is black and right is black and left is red
 							{
 								w->left->color = BLACK;
 								w->color = RED;
 								right_rotate(w);
 								w = x->parent->right;
 							}
+							// case 4 : w is black and right child is red
 							w->color = x->parent->color;
 							x->parent->color = BLACK;
 							w->right->color = BLACK;
@@ -221,7 +222,7 @@ namespace ft {
 							x = root;
 						}
 					}
-					else
+					else // mirror on the other side
 					{
 						node_ptr w = x->parent->left;
 						if (w->color == RED)
@@ -257,29 +258,32 @@ namespace ft {
 			}
 			void	delete_node(node_ptr z)
 			{
+				// store z color and manage the case if z has 2 childrens
 				node_ptr y = z;
 				node_ptr x;
 				color o_color = y->color;
-				if (z->left == NIL)
+				// Case 1 : z has one child
+				if (z->left == NIL) // no children or only right
 				{
 					x = z->right;
 					transplant(z, z->right);
 				}
-				else if (z->right == NIL)
+				else if (z->right == NIL) // only left child
 				{
 					x = z->left;
 					transplant(z, z->left);
 				}
-				else
+				else // both children
 				{
 					y = minimum(z->right);
 					o_color = y->color;
 					x = y->right;
-					if ( y->parent == z)
+					if ( y->parent == z) // y is direct child of z
 						x->parent = y;
 					else
 					{
 						transplant(y, y->right);
+						// change right of y to right of z
 						y->right = z->right;
 						y->right->parent = y;
 					}

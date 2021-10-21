@@ -6,14 +6,13 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/29 15:14:06 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 19:20:05 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/21 14:34:06 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 # include <memory>
-# include <map>
 # include "vector.hpp"
 # include "tree.hpp"
 # include "iterator.hpp"

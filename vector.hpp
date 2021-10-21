@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/14 18:27:19 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/21 13:09:23 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ namespace ft {
 			typedef typename ft::random_access_iterator<const_pointer>		const_iterator;
 			typedef typename ft::reverse_iterator<iterator>					reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-			typedef typename iterator_traits<iterator>::difference_type		difference_type;
+			typedef typename ft::iterator_traits<iterator>::difference_type		difference_type;
 		
 		protected :
 			pointer			_start;
