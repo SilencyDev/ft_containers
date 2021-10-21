@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 16:51:44 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/20 19:26:35 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/21 10:20:28 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,18 +87,18 @@ namespace ft {
 				_tree._alloc.destroy(_tree.NIL);
 				_tree._alloc.deallocate(_tree.NIL, 1);
 			}
-			iterator find (const value_type& k)
+			iterator find (const value_type& k) const
 			{
 				if (_tree.find(_tree.root, k) != NULL)
 					return iterator(_tree.find(_tree.root, k));
 				return (end());
 			}
-			const_iterator find (const value_type& k) const
-			{
-				if (_tree.find(_tree.root, k))
-					return const_iterator(reinterpret_cast<typename tree::const_node_ptr>(_tree.find(_tree.root, k)));
-				return (end());
-			}
+			// const_iterator find (const value_type& k) const
+			// {
+			// 	if (_tree.find(_tree.root, k))
+			// 		return const_iterator(reinterpret_cast<typename tree::const_node_ptr>(_tree.find(_tree.root, k)));
+			// 	return (end());
+			// }
 			pair<iterator,bool> insert (const value_type& val)
 			{
 				bool exist = _tree.find(_tree.root, val) == _tree.NIL ? true : false;
@@ -233,7 +233,7 @@ namespace ft {
 			{
 				return ft::make_pair(lower_bound(k), upper_bound(k));
 			}
-			iterator upper_bound (const value_type& k)
+			iterator upper_bound (const value_type& k) const
 			{
 				iterator it = begin();
 				iterator ite = end();
@@ -243,17 +243,17 @@ namespace ft {
 						break;
 				return (it);
 			}
-			const_iterator upper_bound (const value_type& k) const
-			{
-				const_iterator it = begin();
-				const_iterator ite = end();
+			// const_iterator upper_bound (const value_type& k) const
+			// {
+			// 	const_iterator it = begin();
+			// 	const_iterator ite = end();
 
-				for (; it != ite; it++)
-					if (_key_compare(k, *it) == true)
-						break;
-				return (it);
-			}
-			iterator lower_bound (const value_type& k)
+			// 	for (; it != ite; it++)
+			// 		if (_key_compare(k, *it) == true)
+			// 			break;
+			// 	return (it);
+			// }
+			iterator lower_bound (const value_type& k) const
 			{
 				iterator it = begin();
 				iterator ite = end();
@@ -263,16 +263,16 @@ namespace ft {
 						break;
 				return (it);
 			}
-			const_iterator lower_bound (const value_type& k) const
-			{
-				const_iterator it = begin();
-				const_iterator ite = end();
+			// const_iterator lower_bound (const value_type& k) const
+			// {
+			// 	const_iterator it = begin();
+			// 	const_iterator ite = end();
 
-				for (; it != ite; it++)
-					if (_key_compare(*it, k) == false)
-						break;
-				return (it);
-			}
+			// 	for (; it != ite; it++)
+			// 		if (_key_compare(*it, k) == false)
+			// 			break;
+			// 	return (it);
+			// }
 			allocator_type	get_allocator() const
 			{
 				return (_alloc);
@@ -344,6 +344,5 @@ namespace ft {
 	{
 		return (!(lhs < rhs));
 	}
-
 }
 #endif

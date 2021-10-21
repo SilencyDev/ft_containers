@@ -12,7 +12,7 @@ OBJ_DIR = ./objs_$(NAME)/
 PCH_DIR = ./pchs_$(NAME)/
 
 CFLAGS += 
-CFLAGS += 
+CFLAGS +=
 
 UNAME_S := $(shell uname -s)
 
@@ -86,7 +86,7 @@ else ifeq ($(debug_mode), 4)
 	CFLAGS += -D DEBUG_MODE=4
 endif
 
-CFLAGS = 
+CFLAGS += 
 
 PROJECT_HEADER += ./your_headers.hpp
 
