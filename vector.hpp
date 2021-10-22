@@ -6,7 +6,7 @@
 /*   By: kmacquet <kmacquet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 13:24:26 by kmacquet          #+#    #+#             */
-/*   Updated: 2021/10/21 13:09:23 by kmacquet         ###   ########.fr       */
+/*   Updated: 2021/10/22 09:57:29 by kmacquet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ namespace ft {
 				_alloc.destroy(ptr);
 				if (ptr != _end - 1)
 				{
-					for (; ptr != _end;)
+					for (; ptr != _end - 1;)
 					{
 						_alloc.construct(ptr, *(ptr + 1));
 						_alloc.destroy(ptr++ + 1);

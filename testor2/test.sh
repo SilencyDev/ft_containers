@@ -12,7 +12,7 @@ rm -rf */*_std */*_ft */*dSYM
 run_test() {
     echo -en "$BOLD""Test $1 $RESET "
     g++ -Wall -Wextra -Werror -Wno-unused -I $INCLUDES -D STD "$1" -o "$1"_std
-	g++ -Wall -Wextra -Werror -Wno-unused -g -fsanitize=address -g -I $INCLUDES "$1" -o "$1"_ft
+	g++ -Wall -Wextra -Werror -Wno-unused -g -fsanitize=address -I $INCLUDES "$1" -o "$1"_ft
     if [ "$?" -ne 0 ]
     then
         return
